@@ -1,6 +1,5 @@
 package org.ic.tech.music
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -16,8 +15,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContextCompat
 import org.ic.tech.music.services.AudioService
+import org.ic.tech.music.services.PlayerAction
 import org.ic.tech.music.ui.theme.AICMusicTheme
 
 class MainActivity : ComponentActivity() {
@@ -44,26 +43,24 @@ fun MainComposable() {
             verticalArrangement = Arrangement.Center
         ) {
             Button(onClick = {
-                startMusicService(context)
+                val intent = Intent(context, AudioService::class.java).apply {
+                    action = PlayerAction.NEXT.value
+                }
+
+                context.startService(intent)
             }) {
-                Text(text = "Play")
+                Text(text = "Next")
             }
 
             Button(onClick = {
-                stopMusicService(context)
+                val intent = Intent(context, AudioService::class.java).apply {
+                    action = PlayerAction.PREVIOUS.value
+                }
+
+                context.startService(intent)
             }) {
-                Text(text = "Pause")
+                Text(text = "Previous")
             }
         }
     }
-}
-
-fun startMusicService(context: Context) {
-    val intent = Intent(context, AudioService::class.java)
-    ContextCompat.startForegroundService(context, intent)
-}
-
-fun stopMusicService(context: Context) {
-    val intent = Intent(context, AudioService::class.java)
-    context.stopService(intent)
 }
