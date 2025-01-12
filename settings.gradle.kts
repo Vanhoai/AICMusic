@@ -21,3 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "AICMusic"
 include(":app")
+
+
