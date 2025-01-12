@@ -44,7 +44,7 @@ fun MainComposable() {
         ) {
             Button(onClick = {
                 val intent = Intent(context, AudioService::class.java).apply {
-                    action = PlayerAction.NEXT.value
+                    action = PlayerAction.PLAY.value
                 }
 
                 context.startService(intent)
@@ -53,11 +53,6 @@ fun MainComposable() {
             }
 
             Button(onClick = {
-                val intent = Intent(context, AudioService::class.java).apply {
-                    action = PlayerAction.PREVIOUS.value
-                }
-
-                context.startService(intent)
             }) {
                 Text(text = "Previous")
             }
