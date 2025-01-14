@@ -59,7 +59,17 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.lifecycle.viewmodel.compose)
+
     implementation(kotlin("reflect"))
+
+    // implementation(project(":processor"))
+    // ksp(project(mapOf("path" to ":processor", "configuration" to "releaseRuntimeElements")))
+
+    // Ksp
+    implementation(libs.ksp.processing)
 
     // Timber
     implementation(libs.timber)
@@ -72,6 +82,7 @@ dependencies {
 
     // hilt
     implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)
     ksp(libs.hilt.android.compiler)
 
     // room database
@@ -82,6 +93,12 @@ dependencies {
 
     // Glide
     implementation(libs.glide)
-
     implementation(libs.androidx.media)
+
+    // Coil
+    implementation(libs.coil.compose)
+}
+
+ksp {
+    arg("verbose", "true")
 }

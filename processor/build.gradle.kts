@@ -1,14 +1,15 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "org.ic.tech.domain"
+    namespace = "org.ic.tech.processor"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "org.ic.tech.domain"
+        applicationId = "org.ic.tech.processor"
         minSdk = 24
         //noinspection OldTargetApi
         targetSdk = 34
@@ -45,9 +46,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    // Arrow
-    implementation(libs.arrow.core)
-    implementation(libs.arrow.fx.coroutines)
-
-    implementation(project(":core"))
+    // Ksp
+    implementation(libs.ksp.processing)
 }

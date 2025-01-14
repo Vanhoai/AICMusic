@@ -12,7 +12,7 @@ import androidx.compose.runtime.remember
 import timber.log.Timber
 
 object AppTheme {
-    private val _isDarkTheme = mutableStateOf(false)
+    private val _isDarkTheme = mutableStateOf(true)
     val isDarkTheme: Boolean
         @Composable
         get() = _isDarkTheme.value

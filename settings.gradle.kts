@@ -27,3 +27,4 @@ include(":app")
 // Sub modules
 include(":core")
 include(":domain")
+include(":processor")

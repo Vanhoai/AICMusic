@@ -8,6 +8,9 @@ espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
 composeBom = "2024.12.01"
+nav-version = "2.8.5"
+androidx-lifecycle = "2.8.4"
+lifecycle-viewmodel-compose = "2.8.7"
 
 media3 = "1.5.1"
 glide = "4.16.0"
@@ -20,12 +23,19 @@ ksp = "2.0.21-1.0.25"
 
 # hilt
 hilt = "2.51.1"
+hilt-navigation-compose = "1.2.0"
 
 # logger
 timber = "5.0.1"
 
 # room
 room = "2.6.1"
+
+# arrow
+arrow = "1.2.4"
+
+# coil
+coil = "2.4.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -45,6 +55,10 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
+androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "nav-version" }
+lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle-viewmodel-compose" }
+
 # Media3
 media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
 media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "media3" }
@@ -59,6 +73,9 @@ glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "gl
 # Logger
 timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 
+# Ksp
+ksp-processing = { group = "com.google.devtools.ksp", name = "symbol-processing-api", version.ref = "ksp" }
+
 # Room database
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
@@ -68,6 +85,14 @@ androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "
 # Hilt
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hilt-navigation-compose" }
+
+# Arrow
+arrow-core = { group = "io.arrow-kt", name = "arrow-core", version.ref = "arrow" }
+arrow-fx-coroutines = { group = "io.arrow-kt", name = "arrow-fx-coroutines", version.ref = "arrow" }
+
+# Coil
+coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
