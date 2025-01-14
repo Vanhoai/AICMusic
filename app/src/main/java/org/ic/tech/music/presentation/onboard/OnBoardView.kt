@@ -1,8 +1,16 @@
 package org.ic.tech.music.presentation.onboard
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -15,20 +23,30 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.BlurredEdgeTreatment
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -42,13 +60,8 @@ import androidx.navigation.NavHostController
 import org.ic.tech.music.R
 import org.ic.tech.music.design.theme.AppTheme
 import org.ic.tech.music.design.widgets.base.BaseScaffold
+import org.ic.tech.music.presentation.graphs.NavRoute
 
-val images = listOf(
-    R.drawable.onboard_3,
-    R.drawable.onboard_4,
-    R.drawable.onboard_6,
-    R.drawable.onboard_7,
-)
 
 @Composable
 fun OnBoardView(navHostController: NavHostController) {
@@ -57,15 +70,12 @@ fun OnBoardView(navHostController: NavHostController) {
 
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
-
     val sizeBox = (screenWidth - 40 - 8) / 2
-    val boxCenter = (screenWidth - 40 - 24) / 4
 
     BaseScaffold { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(AppTheme.colors.backgroundPrimary)
                 .padding(innerPadding),
             horizontalAlignment = Alignment.Start,
             verticalArrangement = Arrangement.Top
@@ -77,22 +87,8 @@ fun OnBoardView(navHostController: NavHostController) {
                     .padding(top = 20.dp),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                AnimatedImage(height = sizeBox, width = sizeBox, id = R.drawable.onboard_9)
                 AnimatedImage(height = sizeBox, width = sizeBox, id = R.drawable.onboard_1)
-                AnimatedImage(height = sizeBox, width = sizeBox, id = R.drawable.onboard_5)
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-            Row(modifier = Modifier.fillMaxWidth()) {
-                Spacer(modifier = Modifier.width(20.dp))
-                Row(
-                    modifier = Modifier.weight(1f),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    images.forEach { image ->
-                        AnimatedImage(height = boxCenter, width = boxCenter, id = image)
-                    }
-                }
-                Spacer(modifier = Modifier.width(20.dp))
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -100,27 +96,14 @@ fun OnBoardView(navHostController: NavHostController) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp),
-                horizontalArrangement = Arrangement.Start
+                    .padding(top = 40.dp),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                AnimatedImage(
-                    width = sizeBox,
-                    height = 300,
-                    id = R.drawable.onboard_2
-                )
+                DualOrbitingArcs()
             }
 
             Spacer(modifier = Modifier.weight(1f))
-
-            Text(
-                "Melody of Life",
-                style = AppTheme.typography.italic,
-                fontWeight = FontWeight.ExtraBold,
-                fontSize = 32.sp,
-                color = AppTheme.colors.textPrimary,
-                textAlign = TextAlign.Start,
-                modifier = Modifier.padding(horizontal = 20.dp)
-            )
 
             Text(
                 text = "Music",
@@ -147,7 +130,9 @@ fun OnBoardView(navHostController: NavHostController) {
                     .clip(RoundedCornerShape(8.dp))
                     .background(brush = horizontalGradientBrush)
                     .height(60.dp)
-                    .clickable {},
+                    .clickable {
+                        navHostController.navigate(NavRoute.AUTH.path)
+                    },
                 contentAlignment = Alignment.Center
             ) {
                 Text(
@@ -160,6 +145,123 @@ fun OnBoardView(navHostController: NavHostController) {
         }
     }
 }
+
+@Composable
+fun DualOrbitingArcs(modifier: Modifier = Modifier) {
+    val isPressed = remember { mutableStateOf(false) }
+    val infiniteTransition = rememberInfiniteTransition(label = "infiniteTransition")
+
+    // Animate the angle for the orbiting dot
+    val angle by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 360f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 3000, easing = LinearEasing),
+            repeatMode = RepeatMode.Restart
+        ),
+        label = "angle"
+    )
+
+    val brush = Brush.verticalGradient(listOf(Color(0xFFC0FFA3), Color(0xFFFECCFF)))
+
+    Box(
+        modifier = modifier
+            .size(300.dp)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onPress = {
+                        isPressed.value = true
+                        tryAwaitRelease()
+                        isPressed.value = false
+                    }
+                )
+            }
+            .scale(
+                animateFloatAsState(
+                    targetValue = if (!isPressed.value) 1f else 0.9f,
+                    animationSpec = spring(dampingRatio = Spring.DampingRatioHighBouncy),
+                    label = "SpringEffect"
+                ).value
+            ),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .height(200.dp)
+                .width(200.dp)
+                .offset(x = (-20).dp, y = (-20).dp)
+                .blur(160.dp, edgeTreatment = BlurredEdgeTreatment.Unbounded)
+                .clip(RoundedCornerShape(100.dp))
+                .background(brush = brush),
+        )
+
+
+        VinylRecord()
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            val center = size / 2f
+            val orbitRadius = size.minDimension / 2.5f - 20f
+            val arcWidth = 4f
+
+            drawArc(
+                brush = Brush.sweepGradient(
+                    colors = listOf(
+                        Color(0xFFC0FFA3),
+                        Color(0xFFFECCFF),
+                        Color(0xFFC0FFA3)
+                    )
+                ),
+                startAngle = angle,
+                sweepAngle = 90f,
+                useCenter = false,
+                topLeft = Offset(center.width - orbitRadius, center.height - orbitRadius),
+                size = Size(orbitRadius * 2, orbitRadius * 2),
+                style = Stroke(width = arcWidth, cap = StrokeCap.Round)
+            )
+
+            drawArc(
+                brush = Brush.sweepGradient(
+                    colors = listOf(
+                        Color(0xFFFECCFF),
+                        Color(0xFFC0FFA3),
+                        Color(0xFFFECCFF)
+                    )
+                ),
+                startAngle = angle + 180f,
+                sweepAngle = 90f,
+                useCenter = false,
+                topLeft = Offset(center.width - orbitRadius, center.height - orbitRadius),
+                size = Size(orbitRadius * 2, orbitRadius * 2),
+                style = Stroke(width = arcWidth, cap = StrokeCap.Round)
+            )
+        }
+    }
+}
+
+@Composable
+fun VinylRecord(modifier: Modifier = Modifier, isSpinning: Boolean = true) {
+    Box(modifier = modifier.size(200.dp)) {
+        Canvas(modifier = Modifier.fillMaxSize()) {
+            drawCircle(
+                color = Color.Black,
+                radius = size.minDimension / 2
+            )
+
+            for (i in 1..12) {
+                drawCircle(
+                    color = Color.DarkGray,
+                    radius = size.minDimension / 2 * (1 - i * 0.1f),
+                    style = Stroke(width = 2f)
+                )
+            }
+
+            drawCircle(
+                color = Color.White,
+                radius = size.minDimension / 10
+            )
+        }
+    }
+}
+
 
 @Composable
 fun AnimatedImage(
