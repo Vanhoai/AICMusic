@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -57,14 +59,46 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.lifecycle.viewmodel.compose)
+
+    implementation(kotlin("reflect"))
+
+    // implementation(project(":processor"))
+    // ksp(project(mapOf("path" to ":processor", "configuration" to "releaseRuntimeElements")))
+
+    // Ksp
+    implementation(libs.ksp.processing)
+
+    // Timber
+    implementation(libs.timber)
+
     // Media3
     implementation(libs.media3.exoplayer)
     implementation(libs.media3.common)
     implementation(libs.media3.ui)
     implementation(libs.media3.session)
 
+    // hilt
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.navigation.compose)
+    ksp(libs.hilt.android.compiler)
+
+    // room database
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    testImplementation(libs.androidx.room.testing)
+
     // Glide
     implementation(libs.glide)
-
     implementation(libs.androidx.media)
+
+    // Coil
+    implementation(libs.coil.compose)
+}
+
+ksp {
+    arg("verbose", "true")
 }

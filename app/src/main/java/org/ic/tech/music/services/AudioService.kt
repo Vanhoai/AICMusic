@@ -14,7 +14,6 @@ import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.media3.exoplayer.ExoPlayer
-import org.ic.tech.music.CHANNEL_ID
 import org.ic.tech.music.R
 import org.json.JSONObject
 
@@ -131,7 +130,7 @@ class AudioService : Service() {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
         )
 
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+        val notification = NotificationCompat.Builder(this, "CHANNEL_ID")
             .setContentTitle("I'am a UITer")
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentText("This is a notification")
