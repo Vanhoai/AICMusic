@@ -29,6 +29,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import org.hinsun.music.design.theme.AppTheme
 import org.hinsun.music.design.widgets.base.BaseScaffold
+import org.hinsun.music.design.widgets.shared.SharedGradientButton
 import org.hinsun.music.presentation.graphs.NavRoute
 import org.hinsun.music.presentation.onboard.widgets.DualOrbitingArcs
 import org.hinsun.music.presentation.onboard.widgets.OnboardHeading
@@ -73,25 +74,13 @@ fun OnBoardView(navHostController: NavHostController) {
                 modifier = Modifier.padding(horizontal = 20.dp)
             )
 
-            val horizontalGradientBrush = Brush.horizontalGradient(
-                colors = listOf(
-                    Color(0xFFFFCD6A),
-                    Color(0xFFFF8E52)
-                )
-            )
-
-            Box(
+            SharedGradientButton(
                 modifier = Modifier
-                    .fillMaxWidth()
                     .padding(horizontal = 20.dp)
-                    .padding(bottom = 20.dp)
-                    .clip(RoundedCornerShape(8.dp))
-                    .background(brush = horizontalGradientBrush)
-                    .height(60.dp)
-                    .clickable {
-                        navHostController.navigate(NavRoute.AUTH.path)
-                    },
-                contentAlignment = Alignment.Center
+                    .padding(bottom = 20.dp),
+                onPress = {
+                    navHostController.navigate(NavRoute.AUTH.path)
+                }
             ) {
                 Text(
                     text = "Get Started",

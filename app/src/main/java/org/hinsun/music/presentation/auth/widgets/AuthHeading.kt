@@ -29,7 +29,7 @@ fun AuthHeading() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_music),
+            painter = painterResource(id = R.drawable.ic_huasun_music),
             contentDescription = null,
             modifier = Modifier
                 .width(260.dp)

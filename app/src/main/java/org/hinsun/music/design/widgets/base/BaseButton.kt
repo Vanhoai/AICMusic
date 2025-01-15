@@ -35,6 +35,7 @@ fun BaseButton(
         )
     ),
     behindColor: Color = Color.White.copy(alpha = 0.4f),
+    onPress: () -> Unit = {},
     content: @Composable () -> Unit
 ) {
     val isPressed = remember { mutableStateOf(false) }
@@ -53,7 +54,9 @@ fun BaseButton(
                         isPressed.value = true
                         tryAwaitRelease()
                         isPressed.value = false
-                    }
+
+                        onPress()
+                    },
                 )
             },
         contentAlignment = Alignment.BottomCenter
