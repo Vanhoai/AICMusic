@@ -12,7 +12,7 @@ import org.ic.tech.music.presentation.swipe.SwipeView
 fun NavGraph(navHostController: NavHostController) {
     NavHost(
         navController = navHostController,
-        startDestination = NavRoute.ONBOARD.path
+        startDestination = NavRoute.AUTH.path
     ) {
         composable(NavRoute.ONBOARD.path) {
             OnBoardView(navHostController)
