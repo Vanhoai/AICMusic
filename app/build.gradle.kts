@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "org.ic.tech.music"
+    namespace = "org.hinsun.music"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "org.ic.tech.music"
+        applicationId = "org.hinsun.music"
         minSdk = 24
         //noinspection OldTargetApi
         targetSdk = 34
