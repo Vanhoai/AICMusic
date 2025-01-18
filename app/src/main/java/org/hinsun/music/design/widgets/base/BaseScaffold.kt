@@ -23,6 +23,7 @@ import org.hinsun.music.design.theme.AppTheme
 
 @Composable
 fun BaseScaffold(
+    bottomBar: @Composable () -> Unit = {},
     modifier: Modifier = Modifier,
     content: @Composable (PaddingValues) -> Unit
 ) {
@@ -30,6 +31,7 @@ fun BaseScaffold(
 
     Scaffold(
         modifier = modifier,
+        bottomBar = bottomBar,
         content = {
             Box(
                 modifier = Modifier
