@@ -40,14 +40,14 @@ fun BaseButton(
 ) {
     val isPressed = remember { mutableStateOf(false) }
     val offsetY by animateDpAsState(
-        targetValue = if (isPressed.value) 0.dp else (-12).dp,
+        targetValue = if (isPressed.value) 0.dp else (-6).dp,
         animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing),
         label = "AnimatedOffsetY"
     )
 
     Box(
         modifier = modifier
-            .height(72.dp)
+            .height(66.dp)
             .pointerInput(Unit) {
                 detectTapGestures(
                     onPress = {

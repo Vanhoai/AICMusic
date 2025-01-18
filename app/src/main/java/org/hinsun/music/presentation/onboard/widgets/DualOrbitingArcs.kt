@@ -3,6 +3,7 @@ package org.hinsun.music.presentation.onboard.widgets
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
@@ -22,7 +23,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -36,25 +36,16 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.toOffset
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.hinsun.music.design.widgets.shared.SharedWaveAnimation
-import kotlin.math.roundToInt
 
 @Composable
 fun DualOrbitingArcs(modifier: Modifier = Modifier) {
     val infiniteTransition = rememberInfiniteTransition(label = "infiniteTransition")
     val coroutineScope = rememberCoroutineScope()
-
-    val centerOffset = remember { mutableStateOf(Offset.Zero) }
-    val vinylOffset = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
-    val maxRadius = 200f
 
     // Animate the angle for the orbiting dot
     val angle by infiniteTransition.animateFloat(
@@ -68,6 +59,9 @@ fun DualOrbitingArcs(modifier: Modifier = Modifier) {
     )
 
     val brush = Brush.verticalGradient(listOf(Color(0xFFC0FFA3), Color(0xFFFECCFF)))
+
+    var position = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
+    val boxSize = 200
 
     Box(
         modifier = modifier
@@ -87,48 +81,32 @@ fun DualOrbitingArcs(modifier: Modifier = Modifier) {
 
         Box(
             modifier = Modifier
-                .size(200.dp)
+                .size(boxSize.dp)
+                .graphicsLayer {
+                    translationX = position.value.x
+                    translationY = position.value.y
+                }
                 .pointerInput(Unit) {
                     detectDragGestures(
-                        onDragStart = {},
-                        onDragEnd = {
-                            coroutineScope.launch {
-                                vinylOffset.animateTo(Offset.Zero, animationSpec = spring())
-                            }
-                        },
-                        onDragCancel = {
-                            coroutineScope.launch {
-                                vinylOffset.animateTo(Offset.Zero, animationSpec = spring())
-                            }
-                        },
                         onDrag = { change, dragAmount ->
                             change.consume()
-
-                            val newOffset = vinylOffset.value + dragAmount
-
-                            // calculate distance from center
-                            val distanceFromCenter = newOffset.getDistance()
-
-                            // Limit the offset to the maximum radius
-                            val limitedOffset = if (distanceFromCenter <= maxRadius) {
-                                newOffset
-                            } else {
-                                newOffset.copy(x = maxRadius * newOffset.x / distanceFromCenter)
+                            coroutineScope.launch {
+                                // Update position during drag
+                                position.snapTo(position.value + Offset(dragAmount.x, dragAmount.y))
                             }
-
-                            coroutineScope.launch(Dispatchers.Main) {
-                                vinylOffset.animateTo(limitedOffset, animationSpec = spring())
+                        },
+                        onDragEnd = {
+                            coroutineScope.launch {
+                                // Animate back to (0, 0) with spring
+                                position.animateTo(
+                                    targetValue = Offset.Zero,
+                                    animationSpec = spring(
+                                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                                        stiffness = Spring.StiffnessLow
+                                    )
+                                )
                             }
                         }
-                    )
-                }
-                .onGloballyPositioned { layoutCoordinates ->
-                    centerOffset.value = layoutCoordinates.size.center.toOffset()
-                }
-                .offset {
-                    IntOffset(
-                        vinylOffset.value.x.roundToInt(),
-                        vinylOffset.value.y.roundToInt()
                     )
                 },
             contentAlignment = Alignment.Center

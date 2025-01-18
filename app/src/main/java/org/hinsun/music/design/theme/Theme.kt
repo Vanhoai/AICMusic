@@ -9,6 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.text.TextStyle
 import timber.log.Timber
 
 object AppTheme {
@@ -62,7 +63,7 @@ fun AICMusicTheme(
     CompositionLocalProvider(
         LocalSpacing provides Spacing,
         LocalColors provides colorPalette,
-        LocalTypography provides Typography,
+        LocalTypography provides Typography
     ) {
         ProvideTextStyle(value = Typography.normal, content = content)
     }

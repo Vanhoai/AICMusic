@@ -12,18 +12,10 @@ import org.hinsun.music.presentation.swipe.SwipeView
 fun NavGraph(navHostController: NavHostController) {
     NavHost(
         navController = navHostController,
-        startDestination = NavRoute.ONBOARD.path
+        startDestination = NavRoute.SWIPE.path
     ) {
-        composable(NavRoute.ONBOARD.path) {
-            OnBoardView(navHostController)
-        }
-
-        composable(NavRoute.AUTH.path) {
-            AuthView(navHostController)
-        }
-
-        composable(NavRoute.SWIPE.path) {
-            SwipeView()
-        }
+        composable(NavRoute.ONBOARD.path) { OnBoardView(navHostController) }
+        composable(NavRoute.AUTH.path) { AuthView(navHostController) }
+        composable(NavRoute.SWIPE.path) { SwipeView(navHostController) }
     }
 }
