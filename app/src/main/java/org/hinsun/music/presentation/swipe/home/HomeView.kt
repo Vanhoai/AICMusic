@@ -1,4 +1,4 @@
-package org.hinsun.music.presentation.home
+package org.hinsun.music.presentation.swipe.home
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
