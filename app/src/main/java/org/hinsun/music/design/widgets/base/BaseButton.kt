@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun BaseButton(
     modifier: Modifier = Modifier,
-    contentAlignment: Alignment = Alignment.BottomCenter,
+    contentAlignment: Alignment = Alignment.Center,
     brush: Brush = Brush.horizontalGradient(
         colors = listOf(
             Color.White,

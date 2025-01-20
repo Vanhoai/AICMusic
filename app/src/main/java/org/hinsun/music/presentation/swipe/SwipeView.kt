@@ -87,7 +87,7 @@ fun SwipeView(navHostController: NavHostController) {
                 .fillMaxSize()
                 .padding(paddingValues),
             navController = navController,
-            startDestination = SwipeRoute.HOME.path
+            startDestination = SwipeRoute.SAVE.path
         ) {
             composable(SwipeRoute.HOME.path) {
                 HomeView()

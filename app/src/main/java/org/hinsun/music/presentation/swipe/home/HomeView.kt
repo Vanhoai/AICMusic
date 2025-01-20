@@ -39,90 +39,87 @@ import org.hinsun.music.design.widgets.shared.SharedRowText
 fun HomeView() {
     val scrollState = rememberScrollState()
 
-    BaseScaffold { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .scrollable(scrollState, orientation = Orientation.Vertical)
-        ) {
-            item {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 20.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_logo),
-                        contentDescription = null,
-                    )
-
-                    SharedGradientOutlineImage()
-                }
-            }
-
-            item {
-                Text(
-                    text = "Recently",
-                    style = AppTheme.typography.normal,
-                    fontSize = 18.sp,
-                    color = AppTheme.colors.textPrimary,
-                    modifier = Modifier.padding(start = 20.dp, bottom = 12.dp)
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .scrollable(scrollState, orientation = Orientation.Vertical)
+    ) {
+        item {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 20.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_logo),
+                    contentDescription = null,
                 )
 
-                for (i in 0..4) {
+                SharedGradientOutlineImage()
+            }
+        }
+
+        item {
+            Text(
+                text = "Recently",
+                style = AppTheme.typography.normal,
+                fontSize = 18.sp,
+                color = AppTheme.colors.textPrimary,
+                modifier = Modifier.padding(start = 20.dp, bottom = 12.dp)
+            )
+
+            for (i in 0..4) {
+                SharedCardSong()
+            }
+        }
+
+        item {
+            SharedRowText(text = "Playlists")
+
+            LazyRow {
+                item { Spacer(modifier = Modifier.width(20.dp)) }
+                items(5) {
+                    SharedPlaylistCard()
+                }
+                item { Spacer(modifier = Modifier.width(8.dp)) }
+            }
+        }
+
+        item {
+            Spacer(modifier = Modifier.height(20.dp))
+            SharedRowText(text = "Songs")
+
+            val categories = listOf("Pop", "Rock", "Hip Hop", "Country", "Jazz", "Classical")
+
+            LazyRow {
+                item { Spacer(modifier = Modifier.width(20.dp)) }
+                items(categories) {
+                    Box(
+                        modifier = Modifier
+                            .padding(end = 12.dp)
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(AppTheme.colors.textPrimary.copy(alpha = 0.3f))
+                            .padding(horizontal = 20.dp, vertical = 6.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = it,
+                            style = AppTheme.typography.normal,
+                            fontSize = 16.sp,
+                            color = AppTheme.colors.textPrimary,
+                        )
+                    }
+                }
+
+                item { Spacer(modifier = Modifier.width(8.dp)) }
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+            Column {
+                for (i in 0..10) {
                     SharedCardSong()
-                }
-            }
-
-            item {
-                SharedRowText(text = "Playlists")
-
-                LazyRow {
-                    item { Spacer(modifier = Modifier.width(20.dp)) }
-                    items(5) {
-                        SharedPlaylistCard()
-                    }
-                    item { Spacer(modifier = Modifier.width(8.dp)) }
-                }
-            }
-
-            item {
-                Spacer(modifier = Modifier.height(20.dp))
-                SharedRowText(text = "Songs")
-
-                val categories = listOf("Pop", "Rock", "Hip Hop", "Country", "Jazz", "Classical")
-
-                LazyRow {
-                    item { Spacer(modifier = Modifier.width(20.dp)) }
-                    items(categories) {
-                        Box(
-                            modifier = Modifier
-                                .padding(end = 12.dp)
-                                .clip(RoundedCornerShape(4.dp))
-                                .background(AppTheme.colors.textPrimary.copy(alpha = 0.3f))
-                                .padding(horizontal = 20.dp, vertical = 6.dp),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = it,
-                                style = AppTheme.typography.normal,
-                                fontSize = 16.sp,
-                                color = AppTheme.colors.textPrimary,
-                            )
-                        }
-                    }
-
-                    item { Spacer(modifier = Modifier.width(8.dp)) }
-                }
-
-                Spacer(modifier = Modifier.height(12.dp))
-                Column {
-                    for (i in 0..10) {
-                        SharedCardSong()
-                    }
                 }
             }
         }
