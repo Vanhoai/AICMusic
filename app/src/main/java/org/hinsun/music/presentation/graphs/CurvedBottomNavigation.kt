@@ -1,5 +1,6 @@
 package org.hinsun.music.presentation.graphs
 
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.SpringSpec
@@ -34,9 +35,12 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -50,12 +54,16 @@ data class BottomNavItem(
     val route: SwipeRoute
 )
 
+
 @Composable
 fun CurvedBottomNavigation(
+    currentRoute: String = SwipeRoute.HOME.path,
     items: List<BottomNavItem>,
     onPress: (BottomNavItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
+
     val interactionSource = remember { MutableInteractionSource() }
 
     val c = LocalConfiguration.current.screenWidthDp.toFloat()
@@ -66,7 +74,23 @@ fun CurvedBottomNavigation(
 
     val alpha = (n * 180 / Math.PI).toFloat() * 0.75f
 
-    var angle by remember { mutableFloatStateOf(-2f * alpha) }
+    fun calculateAngle(currentRoute: String = SwipeRoute.HOME.path): Float {
+        var i = 0
+
+        Toast.makeText(context, "CurrentRoute: $currentRoute", Toast.LENGTH_SHORT).show()
+
+        when (currentRoute) {
+            SwipeRoute.HOME.path -> i = 0
+            SwipeRoute.BOOKMARK.path -> i = 1
+            SwipeRoute.SAVE.path -> i = 2
+            SwipeRoute.SETTING.path -> i = 3
+            SwipeRoute.ABOUT.path -> i = 4
+        }
+
+        return (-2f * alpha) + (i * alpha)
+    }
+
+    var angle by remember { mutableFloatStateOf(calculateAngle(currentRoute = currentRoute)) }
     val animatedSweepAngle = animateFloatAsState(
         targetValue = angle,
         animationSpec = SpringSpec(
@@ -76,7 +100,6 @@ fun CurvedBottomNavigation(
         label = "AnimatedSweepAngle"
     )
 
-    var selectedItem by remember { mutableIntStateOf(0) }
     val coroutineScope = rememberCoroutineScope()
 
     Box(
@@ -150,7 +173,6 @@ fun CurvedBottomNavigation(
                                 }
 
                                 withContext(Dispatchers.Main) {
-                                    selectedItem = i
                                     angle = newAngle
 
                                     delay(600)

@@ -1,11 +1,16 @@
 package org.hinsun.music.presentation.swipe
 
 import android.app.Activity
+import android.os.Build
 import androidx.activity.compose.BackHandler
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -53,6 +58,7 @@ val items = listOf(
     )
 )
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun SwipeView(navHostController: NavHostController) {
     val navController = rememberNavController()
@@ -68,6 +74,7 @@ fun SwipeView(navHostController: NavHostController) {
     BaseScaffold(
         bottomBar = {
             CurvedBottomNavigation(
+                currentRoute = currentRoute?.route ?: SwipeRoute.HOME.path,
                 items = items,
                 onPress = { item ->
                     navController.navigate(item.route.path) {
@@ -87,27 +94,13 @@ fun SwipeView(navHostController: NavHostController) {
                 .fillMaxSize()
                 .padding(paddingValues),
             navController = navController,
-            startDestination = SwipeRoute.HOME.path
+            startDestination = SwipeRoute.SETTING.path
         ) {
-            composable(SwipeRoute.HOME.path) {
-                HomeView()
-            }
-
-            composable(SwipeRoute.BOOKMARK.path) {
-                BookmarkView()
-            }
-
-            composable(SwipeRoute.SAVE.path) {
-                SaveView()
-            }
-
-            composable(SwipeRoute.SETTING.path) {
-                SettingView()
-            }
-
-            composable(SwipeRoute.ABOUT.path) {
-                AboutView()
-            }
+            composable(SwipeRoute.HOME.path) { HomeView() }
+            composable(SwipeRoute.BOOKMARK.path) { BookmarkView() }
+            composable(SwipeRoute.SAVE.path) { SaveView() }
+            composable(SwipeRoute.SETTING.path) { SettingView(navHostController) }
+            composable(SwipeRoute.ABOUT.path) { AboutView() }
         }
     }
 }

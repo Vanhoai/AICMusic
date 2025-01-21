@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,6 +47,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.delay
 import org.hinsun.music.R
 import org.hinsun.music.design.theme.AppTheme
 import org.hinsun.music.design.widgets.base.BaseButton
@@ -58,6 +60,8 @@ import kotlin.math.sin
 fun DownloadProgress(
     downloadProgress: Float = 0f,
     onStartDownload: () -> Unit = {},
+    onCancel: () -> Unit = {},
+    onOk: () -> Unit = {},
 ) {
     val configuration = LocalConfiguration.current
     val context = LocalContext.current
@@ -65,6 +69,16 @@ fun DownloadProgress(
     val canvasSize = screenWidth * 0.6
 
     var animationState by remember { mutableFloatStateOf(0f) }
+    var timer by remember { mutableIntStateOf(5) }
+
+    LaunchedEffect(downloadProgress == 100f) {
+        if (downloadProgress == 100f) {
+            while (timer > 0) {
+                timer--
+                delay(1000)
+            }
+        }
+    }
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -104,7 +118,7 @@ fun DownloadProgress(
                 .aspectRatio(1f)
                 .clip(CircleShape)
                 .clickable {
-                    Toast.makeText(context, "Start download audio", Toast.LENGTH_SHORT).show()
+                    if (downloadProgress == 0f) onStartDownload()
                 }
         ) {
             val size = Size(size.width, size.height)
@@ -184,7 +198,8 @@ fun DownloadProgress(
             }
 
             drawContext.canvas.nativeCanvas.apply {
-                val text = "%.2f".format(downloadProgress) + "%"
+                val text =
+                    if (downloadProgress == 0f) "Start" else "%.2f".format(downloadProgress) + "%"
                 val type = context.resources.getFont(R.font.ibm_flex_mono_medium)
 
                 val paint = android.graphics.Paint().apply {
@@ -211,7 +226,7 @@ fun DownloadProgress(
                 .padding(horizontal = 20.dp)
                 .padding(top = 40.dp, bottom = 40.dp)
         ) {
-            BaseButton(modifier = Modifier.weight(1f)) {
+            BaseButton(modifier = Modifier.weight(1f), onPress = { onCancel() }) {
                 Text(
                     text = "Cancel",
                     style = AppTheme.typography.normal,
@@ -222,9 +237,9 @@ fun DownloadProgress(
 
             Spacer(modifier = Modifier.width(20.dp))
 
-            SharedGradientButton(modifier = Modifier.weight(1f)) {
+            SharedGradientButton(modifier = Modifier.weight(1f), onPress = { onOk() }) {
                 Text(
-                    text = "Ok (5s)",
+                    text = if (downloadProgress == 0f) "Ok" else "Ok (${timer}s)",
                     style = AppTheme.typography.normal,
                     fontSize = 18.sp,
                     color = Color.White

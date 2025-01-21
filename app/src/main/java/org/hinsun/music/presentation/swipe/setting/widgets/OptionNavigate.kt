@@ -5,6 +5,8 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -26,11 +29,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.hinsun.music.R
 import org.hinsun.music.design.theme.AppTheme
+import org.hinsun.music.presentation.graphs.NavRoute
 
 data class SingleOption(
     val name: String,
     @DrawableRes val icon: Int,
     val background: Color,
+    val route: NavRoute
 )
 
 data class GroupOption(
@@ -45,12 +50,14 @@ val groups = listOf(
             SingleOption(
                 name = "Theme & Language",
                 icon = R.drawable.ic_light,
-                background = Color(0xFF5C95FF)
+                background = Color(0xFF5C95FF),
+                route = NavRoute.APPEARANCE
             ),
             SingleOption(
                 name = "Animation",
                 icon = R.drawable.ic_animation,
-                background = Color(0xFFFFA85C)
+                background = Color(0xFFFFA85C),
+                route = NavRoute.ANIMATION
             ),
         ),
     ),
@@ -60,22 +67,26 @@ val groups = listOf(
             SingleOption(
                 name = "Audio",
                 icon = R.drawable.ic_audio_outline,
-                background = Color(0xFF14D01A)
+                background = Color(0xFF14D01A),
+                route = NavRoute.AUDIO
             ),
             SingleOption(
                 name = "Downloading",
                 icon = R.drawable.ic_downloading,
-                background = Color(0xFF14D01A)
+                background = Color(0xFF14D01A),
+                route = NavRoute.DOWNLOADING
             ),
             SingleOption(
                 name = "Storage",
                 icon = R.drawable.ic_storage,
-                background = Color(0xFF14D01A)
+                background = Color(0xFF14D01A),
+                route = NavRoute.STORAGE
             ),
             SingleOption(
                 name = "Style player music",
                 icon = R.drawable.ic_style,
-                background = Color(0xFF14D01A)
+                background = Color(0xFF14D01A),
+                route = NavRoute.STYLE
             ),
         ),
     ),
@@ -85,14 +96,18 @@ val groups = listOf(
             SingleOption(
                 name = "Developer options",
                 icon = R.drawable.ic_develop,
-                background = Color(0xFFB7B7B7)
+                background = Color(0xFFB7B7B7),
+                route = NavRoute.DEVELOP
             ),
         ),
     )
 )
 
 @Composable
-fun OptionNavigate() {
+fun OptionNavigate(onPressOption: (path: String) -> Unit) {
+
+    val interactionSource = remember { MutableInteractionSource() }
+
     groups.forEach { group ->
         Column(
             modifier = Modifier
@@ -120,7 +135,13 @@ fun OptionNavigate() {
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(60.dp)
-                            .padding(horizontal = 10.dp),
+                            .padding(horizontal = 10.dp)
+                            .clickable(
+                                interactionSource = interactionSource,
+                                indication = null
+                            ) {
+                                onPressOption(option.route.path)
+                            },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         Box(

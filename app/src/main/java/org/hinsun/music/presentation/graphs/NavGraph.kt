@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import org.hinsun.music.presentation.auth.AuthView
 import org.hinsun.music.presentation.onboard.OnBoardView
 import org.hinsun.music.presentation.swipe.SwipeView
+import org.hinsun.music.presentation.swipe.setting.appearance.AppearanceView
 
 @Composable
 fun NavGraph(navHostController: NavHostController) {
@@ -17,5 +18,6 @@ fun NavGraph(navHostController: NavHostController) {
         composable(NavRoute.ONBOARD.path) { OnBoardView(navHostController) }
         composable(NavRoute.AUTH.path) { AuthView(navHostController) }
         composable(NavRoute.SWIPE.path) { SwipeView(navHostController) }
+        composable(NavRoute.APPEARANCE.path) { AppearanceView(navHostController) }
     }
 }

@@ -1,5 +1,7 @@
 package org.hinsun.music.presentation.swipe.save
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
@@ -69,12 +71,11 @@ import org.hinsun.music.presentation.swipe.save.widgets.DownloadAction
 import org.hinsun.music.presentation.swipe.save.widgets.DownloadModalBottomSheet
 import org.hinsun.music.presentation.swipe.save.widgets.PasteLink
 
-@OptIn(ExperimentalMaterial3Api::class)
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun SaveView() {
     val scrollState = rememberScrollState()
     val keyboardController = LocalSoftwareKeyboardController.current
-
     var showBottomSheet by remember { mutableStateOf(false) }
 
     LazyColumn(
@@ -131,9 +132,12 @@ fun SaveView() {
         }
     }
 
-    if (showBottomSheet) {
-        DownloadModalBottomSheet(onDismissRequest = { showBottomSheet = false })
-    }
+    DownloadModalBottomSheet(
+        showBottomSheet = showBottomSheet,
+        onCloseBottomSheet = {
+            showBottomSheet = false
+        }
+    )
 }
 
 

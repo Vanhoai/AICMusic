@@ -15,12 +15,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import org.hinsun.music.R
 import org.hinsun.music.design.widgets.shared.SharedGradientOutlineImage
 import org.hinsun.music.presentation.swipe.setting.widgets.OptionNavigate
 
 @Composable
-fun SettingView() {
+fun SettingView(navHostController: NavHostController) {
     val scrollState = rememberScrollState()
 
     LazyColumn(
@@ -46,7 +47,7 @@ fun SettingView() {
         }
 
         item {
-            OptionNavigate()
+            OptionNavigate(onPressOption = { path -> navHostController.navigate(path) })
         }
     }
 }
