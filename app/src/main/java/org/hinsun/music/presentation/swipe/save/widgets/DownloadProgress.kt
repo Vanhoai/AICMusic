@@ -4,7 +4,10 @@ import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
@@ -23,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -34,6 +38,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Fill
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.platform.LocalConfiguration
@@ -46,6 +51,8 @@ import org.hinsun.music.design.theme.AppTheme
 import org.hinsun.music.design.theme.fontFamily
 import org.hinsun.music.design.widgets.base.BaseButton
 import org.hinsun.music.design.widgets.shared.SharedGradientButton
+import kotlin.math.PI
+import kotlin.math.sin
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
@@ -56,19 +63,38 @@ fun DownloadProgress() {
     val screenWidth = configuration.screenWidthDp
     val canvasSize = screenWidth * 0.6
 
-    val progress by remember { mutableFloatStateOf(0f) }
-    var animatedProgress by remember { mutableFloatStateOf(0f) }
+    var animationState by remember { mutableFloatStateOf(0f) }
+    var progress by remember { mutableFloatStateOf(0f) }
 
-    LaunchedEffect(progress) {
+
+    LaunchedEffect(Unit) {
+        while (true) {
+            animate(
+                initialValue = 0f,
+                targetValue = 2 * PI.toFloat(),
+                animationSpec = infiniteRepeatable(
+                    animation = tween(2000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Restart
+                )
+            ) { value, _ ->
+                animationState = value
+            }
+        }
+    }
+
+    LaunchedEffect(Unit) {
         animate(
-            initialValue = animatedProgress,
-            targetValue = progress,
+            initialValue = 0f,
+            targetValue = 100f,
             animationSpec = tween(
-                durationMillis = 1000,
-                easing = FastOutSlowInEasing
+                durationMillis = 5000,
+                easing = LinearEasing
             )
         ) { value, _ ->
-            animatedProgress = value
+            progress = value
+            if (value >= 100f) {
+                Toast.makeText(context, "Download Complete", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -80,7 +106,7 @@ fun DownloadProgress() {
     ) {
 
         Text(
-            text = "Download",
+            text = "Download Progress",
             style = AppTheme.typography.normal,
             fontSize = 28.sp,
             fontWeight = FontWeight.Medium,
@@ -120,33 +146,64 @@ fun DownloadProgress() {
                 center = center
             )
 
-//            path.addArc(
-//                Rect(
-//                    center = center,
-//                    radius = radius
-//                ),
-//                180f,
-//                360f
-//            )
-//            path.arcTo(
-//                rect = Rect(
-//                    center = center,
-//                    radius = radius
-//                ),
-//                180f,
-//                -360f * (animatedProgress / 100f),
-//                forceMoveTo = true
-//            )
-//            path.close()
-//
-//            drawPath(
-//                path = path,
-//                color = Color(0xFF89FF52)
-//            )
+            // Function to create wave paths
+            fun createWavePath(amplitude: Float, frequency: Float, phase: Float): Pair<Path, Path> {
+                val wavePath = Path()
+                val fillPath = Path()
+
+                val startY = center.y + radius - (2 * radius * progress / 100f)
+                fillPath.moveTo(-radius, size.height)
+
+                for (x in (-radius.toInt())..(radius.toInt())) {
+                    val xPos = center.x + x
+                    val yPos = startY + amplitude *
+                            sin((frequency * x / radius) + animationState + phase)
+
+                    if (x == -radius.toInt()) {
+                        wavePath.moveTo(xPos, yPos)
+                        fillPath.moveTo(xPos, yPos)
+                    } else {
+                        wavePath.lineTo(xPos, yPos)
+                        fillPath.lineTo(xPos, yPos)
+                    }
+                }
+
+                fillPath.lineTo(center.x + radius, size.height)
+                fillPath.lineTo(center.x - radius, size.height)
+                fillPath.close()
+
+                return Pair(wavePath, fillPath)
+            }
+
+
+            // Define parameters for three waves
+            val waveParams = listOf(
+                Triple(radius / 16f, 8f, 0f),
+                Triple(radius / 12f, 6f, PI.toFloat() / 4),
+                Triple(radius / 10f, 4f, PI.toFloat() / 2)
+            )
+
+            // Draw waves from largest to smallest
+            waveParams.reversed().forEachIndexed { index, (amplitude, frequency, phase) ->
+                val (wavePath, fillPath) = createWavePath(amplitude, frequency, phase)
+
+                // Draw filled area with different alphas
+                val colorFill = when (index) {
+                    0 -> Color(0xFF93FF61)
+                    1 -> Color(0xFF93FF61).copy(alpha = 0.5f)
+                    2 -> Color(0xFF93FF61).copy(alpha = 0.3f)
+                    else -> Color(0xFF93FF61)
+                }
+
+                drawPath(
+                    path = fillPath,
+                    color = colorFill,
+                    style = Fill
+                )
+            }
 
             drawContext.canvas.nativeCanvas.apply {
-                // val text = "${animatedProgress.toInt()}%"
-                val text = "Start"
+                val text = "${progress}%"
 
                 val type = context.resources.getFont(R.font.ibm_flex_mono_medium)
 
