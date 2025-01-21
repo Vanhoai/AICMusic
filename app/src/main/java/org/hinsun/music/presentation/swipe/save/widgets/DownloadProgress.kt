@@ -48,7 +48,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.hinsun.music.R
 import org.hinsun.music.design.theme.AppTheme
-import org.hinsun.music.design.theme.fontFamily
 import org.hinsun.music.design.widgets.base.BaseButton
 import org.hinsun.music.design.widgets.shared.SharedGradientButton
 import kotlin.math.PI
@@ -56,16 +55,16 @@ import kotlin.math.sin
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun DownloadProgress() {
-
+fun DownloadProgress(
+    downloadProgress: Float = 0f,
+    onStartDownload: () -> Unit = {},
+) {
     val configuration = LocalConfiguration.current
     val context = LocalContext.current
     val screenWidth = configuration.screenWidthDp
     val canvasSize = screenWidth * 0.6
 
     var animationState by remember { mutableFloatStateOf(0f) }
-    var progress by remember { mutableFloatStateOf(0f) }
-
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -78,22 +77,6 @@ fun DownloadProgress() {
                 )
             ) { value, _ ->
                 animationState = value
-            }
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        animate(
-            initialValue = 0f,
-            targetValue = 100f,
-            animationSpec = tween(
-                durationMillis = 5000,
-                easing = LinearEasing
-            )
-        ) { value, _ ->
-            progress = value
-            if (value >= 100f) {
-                Toast.makeText(context, "Download Complete", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -124,8 +107,6 @@ fun DownloadProgress() {
                     Toast.makeText(context, "Start download audio", Toast.LENGTH_SHORT).show()
                 }
         ) {
-
-            val path = Path()
             val size = Size(size.width, size.height)
             val radius = size.width / 2f
             val center = Offset(size.width / 2f, size.height / 2f)
@@ -151,7 +132,7 @@ fun DownloadProgress() {
                 val wavePath = Path()
                 val fillPath = Path()
 
-                val startY = center.y + radius - (2 * radius * progress / 100f)
+                val startY = center.y + radius - (2 * radius * downloadProgress / 100f)
                 fillPath.moveTo(-radius, size.height)
 
                 for (x in (-radius.toInt())..(radius.toInt())) {
@@ -203,8 +184,7 @@ fun DownloadProgress() {
             }
 
             drawContext.canvas.nativeCanvas.apply {
-                val text = "${progress}%"
-
+                val text = "%.2f".format(downloadProgress) + "%"
                 val type = context.resources.getFont(R.font.ibm_flex_mono_medium)
 
                 val paint = android.graphics.Paint().apply {

@@ -153,7 +153,7 @@ fun CurvedBottomNavigation(
                                     selectedItem = i
                                     angle = newAngle
 
-                                    delay(300)
+                                    delay(600)
                                     onPress(items[i])
                                 }
                             }
