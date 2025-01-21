@@ -1,4 +1,4 @@
-package org.hinsun.music.presentation.swipe.setting.appearance
+package org.hinsun.music.presentation.swipe.setting.animation
 
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -11,13 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import org.hinsun.music.design.widgets.base.BaseScaffold
 import org.hinsun.music.design.widgets.shared.SharedTopBar
-import org.hinsun.music.presentation.swipe.setting.widgets.buildAccessibility
-import org.hinsun.music.presentation.swipe.setting.widgets.buildAppearanceBrightAreaBackground
-import org.hinsun.music.presentation.swipe.setting.widgets.buildAppearanceTheme
+import org.hinsun.music.presentation.swipe.setting.widgets.buildCanvas
+import org.hinsun.music.presentation.swipe.setting.widgets.buildMotion
 
 @Composable
-fun AppearanceView(navHostController: NavHostController) {
-
+fun AnimationView(navHostController: NavHostController) {
     val scrollState = rememberScrollState()
 
     BaseScaffold { innerPadding ->
@@ -28,14 +26,11 @@ fun AppearanceView(navHostController: NavHostController) {
                 .scrollable(scrollState, orientation = Orientation.Vertical)
         ) {
             item {
-                SharedTopBar(
-                    name = "Appearance",
-                    onBackPress = { navHostController.popBackStack() })
+                SharedTopBar(name = "Animation", onBackPress = { navHostController.popBackStack() })
             }
 
-            buildAppearanceTheme()
-            buildAppearanceBrightAreaBackground()
-            buildAccessibility()
+            buildMotion()
+            buildCanvas()
         }
     }
 }

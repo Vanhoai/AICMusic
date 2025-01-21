@@ -19,7 +19,10 @@ import org.hinsun.music.R
 import org.hinsun.music.design.theme.AppTheme
 
 @Composable
-fun SharedTopBar(onBackPress: () -> Unit) {
+fun SharedTopBar(
+    name: String,
+    onBackPress: () -> Unit
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -28,7 +31,7 @@ fun SharedTopBar(onBackPress: () -> Unit) {
         contentAlignment = Alignment.CenterStart
     ) {
         Text(
-            text = "Appearance",
+            text = name,
             style = AppTheme.typography.normal,
             fontSize = 18.sp,
             color = AppTheme.colors.textPrimary,
