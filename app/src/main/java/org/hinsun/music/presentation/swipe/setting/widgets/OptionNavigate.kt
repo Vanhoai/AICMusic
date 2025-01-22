@@ -97,7 +97,7 @@ val groups = listOf(
                 name = "Developer options",
                 icon = R.drawable.ic_develop,
                 background = Color(0xFFB7B7B7),
-                route = NavRoute.DEVELOP
+                route = NavRoute.DEVELOPER
             ),
         ),
     )
@@ -105,7 +105,6 @@ val groups = listOf(
 
 @Composable
 fun OptionNavigate(onPressOption: (path: String) -> Unit) {
-
     val interactionSource = remember { MutableInteractionSource() }
 
     groups.forEach { group ->

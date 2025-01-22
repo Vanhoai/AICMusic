@@ -4,6 +4,9 @@ import android.app.Activity
 import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -58,9 +61,13 @@ val items = listOf(
     )
 )
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun SwipeView(navHostController: NavHostController) {
+fun SharedTransitionScope.SwipeView(
+    navHostController: NavHostController,
+    animatedVisibilityScope: AnimatedVisibilityScope
+) {
     val navController = rememberNavController()
 
     val activity = LocalContext.current as Activity
@@ -74,6 +81,8 @@ fun SwipeView(navHostController: NavHostController) {
     BaseScaffold(
         bottomBar = {
             CurvedBottomNavigation(
+                animatedVisibilityScope = animatedVisibilityScope,
+                navHostController = navHostController,
                 currentRoute = currentRoute?.route ?: SwipeRoute.HOME.path,
                 items = items,
                 onPress = { item ->
@@ -94,7 +103,7 @@ fun SwipeView(navHostController: NavHostController) {
                 .fillMaxSize()
                 .padding(paddingValues),
             navController = navController,
-            startDestination = SwipeRoute.SETTING.path
+            startDestination = SwipeRoute.HOME.path
         ) {
             composable(SwipeRoute.HOME.path) { HomeView() }
             composable(SwipeRoute.BOOKMARK.path) { BookmarkView() }

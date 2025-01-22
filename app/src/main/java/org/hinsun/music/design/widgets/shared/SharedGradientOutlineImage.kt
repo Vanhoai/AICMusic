@@ -45,7 +45,8 @@ fun SharedGradientOutlineImage() {
                         Color(0xFFFF8A8A),
                         Color(0xFFCD94FF),
                         Color(0xFFA8FF44),
-                        Color(0xFFFFCA61)
+                        Color(0xFFFFCA61),
+                        Color(0xFFFF8A8A),
                     ),
                     center = center
                 )

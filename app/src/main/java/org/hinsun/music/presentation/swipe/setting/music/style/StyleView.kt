@@ -1,4 +1,4 @@
-package org.hinsun.music.presentation.swipe.setting.animation
+package org.hinsun.music.presentation.swipe.setting.music.style
 
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -11,11 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import org.hinsun.music.design.widgets.base.BaseScaffold
 import org.hinsun.music.design.widgets.shared.SharedTopBar
-import org.hinsun.music.presentation.swipe.setting.widgets.buildCanvas
-import org.hinsun.music.presentation.swipe.setting.widgets.buildMotion
 
 @Composable
-fun AnimationView(navHostController: NavHostController) {
+fun StyleView(navHostController: NavHostController) {
     val scrollState = rememberScrollState()
 
     BaseScaffold { innerPadding ->
@@ -26,11 +24,8 @@ fun AnimationView(navHostController: NavHostController) {
                 .scrollable(scrollState, orientation = Orientation.Vertical)
         ) {
             item {
-                SharedTopBar(name = "Animation", onBackPress = { navHostController.popBackStack() })
+                SharedTopBar(name = "StyleView", onBackPress = { navHostController.popBackStack() })
             }
-
-            buildMotion()
-            buildCanvas()
         }
     }
 }

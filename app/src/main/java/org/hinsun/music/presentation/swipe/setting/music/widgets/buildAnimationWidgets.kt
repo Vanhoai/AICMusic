@@ -1,4 +1,4 @@
-package org.hinsun.music.presentation.swipe.setting.widgets
+package org.hinsun.music.presentation.swipe.setting.music.widgets
 
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.runtime.getValue

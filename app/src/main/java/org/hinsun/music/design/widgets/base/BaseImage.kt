@@ -27,6 +27,8 @@ val images = listOf(
 
 @Composable
 fun BaseImage(
+    modifier: Modifier = Modifier,
+    url: String? = null,
     shape: Shape = RoundedCornerShape(8.dp),
     height: Int = 60,
     width: Int = 60,
@@ -34,9 +36,9 @@ fun BaseImage(
     val index = Random.nextInt(0, images.size)
 
     AsyncImage(
-        model = images[index],
+        model = url ?: images[index],
         contentDescription = null,
-        modifier = Modifier
+        modifier = modifier
             .width(width.dp)
             .height(height.dp)
             .clip(shape),

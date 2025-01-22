@@ -57,11 +57,12 @@ fun BaseTabSlider(
     modifier: Modifier = Modifier
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp
-    val sliderWidth = (screenWidth - 40 - ((options.size + 1) * innerPadding)) / options.size
+    val sliderWidth =
+        (screenWidth - 40 - ((options.size + 1) * innerPadding)).toFloat() / options.size
 
     var indexSelected by remember { mutableIntStateOf(0) }
     val offsetX by animateDpAsState(
-        targetValue = ((sliderWidth + innerPadding * 2) * indexSelected).dp,
+        targetValue = ((sliderWidth + innerPadding) * indexSelected).dp,
         animationSpec = SpringSpec(
             dampingRatio = Spring.DampingRatioMediumBouncy,
             stiffness = Spring.StiffnessLow
@@ -87,9 +88,9 @@ fun BaseTabSlider(
         Box(
             modifier = Modifier
                 .offset(x = offsetX)
-                .width(sliderWidth.dp)
-                .height(height.dp)
                 .padding(innerPadding.dp)
+                .width(sliderWidth.dp)
+                .height((height - innerPadding * 2).dp)
                 .clip(RoundedCornerShape((borderRadius - innerPadding).dp))
                 .background(Color(0xFFD9D9D9))
         )
@@ -97,7 +98,8 @@ fun BaseTabSlider(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(height.dp),
+                .height(height.dp)
+                .padding(horizontal = (innerPadding / 2).dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -112,6 +114,7 @@ fun BaseTabSlider(
                 Row(
                     modifier = Modifier
                         .weight(1f)
+                        .padding((innerPadding / 2).dp)
                         .clickable { indexSelected = i },
                     horizontalArrangement = Arrangement.Center
                 ) {

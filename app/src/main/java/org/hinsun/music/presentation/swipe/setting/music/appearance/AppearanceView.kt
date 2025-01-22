@@ -1,4 +1,4 @@
-package org.hinsun.music.presentation.swipe.setting.appearance
+package org.hinsun.music.presentation.swipe.setting.music.appearance
 
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -11,9 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import org.hinsun.music.design.widgets.base.BaseScaffold
 import org.hinsun.music.design.widgets.shared.SharedTopBar
-import org.hinsun.music.presentation.swipe.setting.widgets.buildAccessibility
-import org.hinsun.music.presentation.swipe.setting.widgets.buildAppearanceBrightAreaBackground
-import org.hinsun.music.presentation.swipe.setting.widgets.buildAppearanceTheme
+import org.hinsun.music.presentation.swipe.setting.music.widgets.buildAccessibility
+import org.hinsun.music.presentation.swipe.setting.music.widgets.buildAppearanceBrightAreaBackground
+import org.hinsun.music.presentation.swipe.setting.music.widgets.buildAppearanceTheme
 
 @Composable
 fun AppearanceView(navHostController: NavHostController) {
