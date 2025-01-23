@@ -1,7 +1,8 @@
 package org.hinsun.music.design.widgets.shared
 
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,14 +24,21 @@ import org.hinsun.music.design.theme.AppTheme
 import org.hinsun.music.design.widgets.base.BaseImage
 
 @Composable
-fun SharedCardSong() {
+fun SharedCardSong(
+    modifier: Modifier = Modifier,
+    onPress: () -> Unit = {}
+) {
+
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 20.dp)
             .padding(bottom = 12.dp)
+            .clickable { onPress() }
     ) {
         BaseImage()
+
+
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
             Row(modifier = Modifier.fillMaxSize()) {
@@ -41,7 +49,7 @@ fun SharedCardSong() {
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     color = AppTheme.colors.textPrimary,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f)
                 )
 
                 Image(

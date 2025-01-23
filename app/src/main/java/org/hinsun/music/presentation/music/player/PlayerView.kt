@@ -1,4 +1,4 @@
-package org.hinsun.music.presentation.player
+package org.hinsun.music.presentation.music.player
 
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibilityScope
@@ -51,16 +51,17 @@ import org.hinsun.music.R
 import org.hinsun.music.design.theme.AppTheme
 import org.hinsun.music.design.widgets.base.BaseImage
 import org.hinsun.music.design.widgets.base.BaseScaffold
-import org.hinsun.music.presentation.player.widgets.MusicActions
-import org.hinsun.music.presentation.player.widgets.MusicPlayerProgressBar
+import org.hinsun.music.presentation.graphs.idBackgroundTransition
+import org.hinsun.music.presentation.graphs.idImageTransition
+import org.hinsun.music.presentation.graphs.idNameTransition
+import org.hinsun.music.presentation.music.player.widgets.MusicActions
+import org.hinsun.music.presentation.music.player.widgets.MusicPlayerProgressBar
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.PlayerView(
     navHostController: NavHostController,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    idName: Int,
-    idImage: Int,
 ) {
     val context = LocalContext.current
     val infiniteTransition = rememberInfiniteTransition()
@@ -88,6 +89,11 @@ fun SharedTransitionScope.PlayerView(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .background(Color.Black.copy(alpha = 0.5f))
+                .sharedElement(
+                    state = rememberSharedContentState(key = idBackgroundTransition),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                )
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_arrow_music),
@@ -134,13 +140,12 @@ fun SharedTransitionScope.PlayerView(
                     contentAlignment = Alignment.Center
                 ) {
                     BaseImage(
-                        url = "https://i.pinimg.com/474x/ec/81/4e/ec814e42b8d16aadcae2eaeaa4783354.jpg",
                         width = 240,
                         height = 240,
                         shape = CircleShape,
                         modifier = Modifier
                             .sharedElement(
-                                state = rememberSharedContentState(key = idImage.toString()),
+                                state = rememberSharedContentState(key = idImageTransition),
                                 animatedVisibilityScope = animatedVisibilityScope,
                             )
                     )
@@ -161,7 +166,7 @@ fun SharedTransitionScope.PlayerView(
                     color = AppTheme.colors.textPrimary,
                     modifier = Modifier
                         .sharedElement(
-                            state = rememberSharedContentState(key = idName.toString()),
+                            state = rememberSharedContentState(key = idNameTransition),
                             animatedVisibilityScope = animatedVisibilityScope,
                         )
                 )

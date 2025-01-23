@@ -67,9 +67,8 @@ class AnimatedPropertyProcessorProvider : SymbolProcessorProvider {
     }
 }
 
-
 // Colors
-val darkColors = Color(0xFF2D2D2D)
+val darkColors = Color(0xFF242424)
 
 @Stable
 class ICMusicColors(

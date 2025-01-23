@@ -1,4 +1,4 @@
-package org.hinsun.music.presentation.player.widgets
+package org.hinsun.music.presentation.music.player.widgets
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image

@@ -2,6 +2,9 @@ package org.hinsun.music.presentation.swipe.save
 
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
@@ -59,6 +62,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
 import org.hinsun.music.R
 import org.hinsun.music.design.theme.AppTheme
@@ -73,7 +77,7 @@ import org.hinsun.music.presentation.swipe.save.widgets.PasteLink
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun SaveView() {
+fun SaveView(navHostController: NavHostController) {
     val scrollState = rememberScrollState()
     val keyboardController = LocalSoftwareKeyboardController.current
     var showBottomSheet by remember { mutableStateOf(false) }

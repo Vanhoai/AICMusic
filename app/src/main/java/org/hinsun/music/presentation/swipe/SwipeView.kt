@@ -105,9 +105,9 @@ fun SharedTransitionScope.SwipeView(
             navController = navController,
             startDestination = SwipeRoute.HOME.path
         ) {
-            composable(SwipeRoute.HOME.path) { HomeView() }
+            composable(SwipeRoute.HOME.path) { HomeView(navHostController) }
             composable(SwipeRoute.BOOKMARK.path) { BookmarkView() }
-            composable(SwipeRoute.SAVE.path) { SaveView() }
+            composable(SwipeRoute.SAVE.path) { SaveView(navHostController) }
             composable(SwipeRoute.SETTING.path) { SettingView(navHostController) }
             composable(SwipeRoute.ABOUT.path) { AboutView() }
         }

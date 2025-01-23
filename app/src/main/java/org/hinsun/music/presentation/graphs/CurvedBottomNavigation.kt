@@ -5,6 +5,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.SpringSpec
 import androidx.compose.animation.core.animateFloatAsState
@@ -70,6 +71,10 @@ data class BottomNavItem(
     val route: SwipeRoute
 )
 
+const val idNameTransition = "IdNameTransition"
+const val idImageTransition = "IdImageTransition"
+const val idBackgroundTransition = "IdBackgroundTransition"
+
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun SharedTransitionScope.CurvedBottomNavigation(
@@ -80,8 +85,6 @@ fun SharedTransitionScope.CurvedBottomNavigation(
     onPress: (BottomNavItem) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val idName = 1000
-    val idImage = 2000
 
     val context = LocalContext.current
     val c = LocalConfiguration.current.screenWidthDp.toFloat()
@@ -134,18 +137,21 @@ fun SharedTransitionScope.CurvedBottomNavigation(
                     interactionSource = interactionSource,
                     indication = null,
                 ) {
-                    navHostController.navigate("${NavRoute.PLAYER.path}/${idImage}/${idName}")
+                    navHostController.navigate(NavRoute.PLAYER.path)
                 }
+                .sharedElement(
+                    state = rememberSharedContentState(key = idBackgroundTransition),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                )
         ) {
             Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
                 BaseImage(
-                    url = "https://i.pinimg.com/474x/ec/81/4e/ec814e42b8d16aadcae2eaeaa4783354.jpg",
                     width = 48,
                     height = 48,
                     shape = RoundedCornerShape(4.dp),
                     modifier = Modifier
                         .sharedElement(
-                            state = rememberSharedContentState(key = idImage.toString()),
+                            state = rememberSharedContentState(key = idImageTransition),
                             animatedVisibilityScope = animatedVisibilityScope,
                         )
                 )
@@ -161,7 +167,7 @@ fun SharedTransitionScope.CurvedBottomNavigation(
                         color = AppTheme.colors.textPrimary,
                         modifier = Modifier
                             .sharedElement(
-                                state = rememberSharedContentState(key = idName.toString()),
+                                state = rememberSharedContentState(key = idNameTransition),
                                 animatedVisibilityScope = animatedVisibilityScope,
                             )
                     )
@@ -172,7 +178,11 @@ fun SharedTransitionScope.CurvedBottomNavigation(
                         fontSize = 14.sp,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        color = AppTheme.colors.textPrimary
+                        color = AppTheme.colors.textPrimary,
+                        modifier = Modifier.sharedElement(
+                            state = rememberSharedContentState(key = "DurationTransition"),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                        )
                     )
                 }
 

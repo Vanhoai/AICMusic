@@ -1,4 +1,4 @@
-package org.hinsun.music.presentation.player.widgets
+package org.hinsun.music.presentation.music.player.widgets
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,10 +19,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.hinsun.music.design.theme.AppTheme
-
-class MusicPlayerProgressBar {
-}
-
 
 @Composable
 fun GradientProgressBar(
@@ -69,10 +65,12 @@ fun GradientProgressBar(
                 style = AppTheme.typography.normal,
                 color = Color.White
             )
+
             Text(
                 text = formatTime(totalTime),
                 style = AppTheme.typography.normal,
-                color = Color.White
+                color = Color.White,
+                modifier = Modifier
             )
         }
     }

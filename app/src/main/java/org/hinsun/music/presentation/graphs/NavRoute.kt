@@ -14,4 +14,5 @@ enum class NavRoute(val path: String) {
     DEVELOPER("developer"),
 
     PLAYER("player"),
+    PLAYLIST("playlist"),
 }

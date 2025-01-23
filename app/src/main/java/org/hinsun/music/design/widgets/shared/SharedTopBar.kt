@@ -3,6 +3,7 @@ package org.hinsun.music.design.widgets.shared
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,7 +22,8 @@ import org.hinsun.music.design.theme.AppTheme
 @Composable
 fun SharedTopBar(
     name: String,
-    onBackPress: () -> Unit
+    onBackPress: () -> Unit,
+    actions: @Composable () -> Unit = {}
 ) {
     Box(
         modifier = Modifier
@@ -47,5 +49,9 @@ fun SharedTopBar(
                 .size(24.dp)
                 .clickable { onBackPress() },
         )
+
+        Box(modifier = Modifier.align(Alignment.CenterEnd)) {
+            actions()
+        }
     }
 }

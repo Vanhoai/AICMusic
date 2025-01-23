@@ -13,7 +13,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import org.hinsun.music.presentation.auth.AuthView
 import org.hinsun.music.presentation.onboard.OnBoardView
-import org.hinsun.music.presentation.player.PlayerView
+import org.hinsun.music.presentation.music.player.PlayerView
+import org.hinsun.music.presentation.music.playlist.PlaylistView
 import org.hinsun.music.presentation.swipe.SwipeView
 import org.hinsun.music.presentation.swipe.setting.advanced.develop.DeveloperOptionsView
 import org.hinsun.music.presentation.swipe.setting.music.animation.AnimationView
@@ -49,21 +50,17 @@ fun NavGraph(navHostController: NavHostController) {
             composable(NavRoute.STYLE.path) { StyleView(navHostController) }
             composable(NavRoute.DEVELOPER.path) { DeveloperOptionsView(navHostController) }
 
-            composable(
-                route = "${NavRoute.PLAYER.path}/{idImage}/{idName}",
-                arguments = listOf(
-                    navArgument("idImage") { type = NavType.IntType },
-                    navArgument("idName") { type = NavType.IntType }
-                )
-            ) {
-                val idName = it.arguments?.getInt("idName") ?: 1000
-                val idImage = it.arguments?.getInt("idImage") ?: 2000
-
+            composable(NavRoute.PLAYER.path) {
                 PlayerView(
                     navHostController = navHostController,
-                    animatedVisibilityScope = this,
-                    idName = idName,
-                    idImage = idImage
+                    animatedVisibilityScope = this
+                )
+            }
+
+            composable(route = NavRoute.PLAYLIST.path) {
+                PlaylistView(
+                    navHostController = navHostController,
+                    animatedVisibilityScope = this
                 )
             }
         }
