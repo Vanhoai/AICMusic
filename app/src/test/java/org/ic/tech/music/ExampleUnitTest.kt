@@ -1,4 +1,4 @@
-package org.ic.tech.music
+package org.hinsun.music
 
 import org.junit.Test
 
