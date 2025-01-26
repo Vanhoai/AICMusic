@@ -5,5 +5,5 @@ enum class SwipeRoute(val path: String) {
     BOOKMARK("bookmark"),
     SAVE("save"),
     SETTING("setting"),
-    ABOUT("about")
+    MORE("more")
 }

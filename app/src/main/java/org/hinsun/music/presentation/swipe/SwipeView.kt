@@ -11,9 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -27,9 +24,9 @@ import org.hinsun.music.design.widgets.base.BaseScaffold
 import org.hinsun.music.presentation.graphs.BottomNavItem
 import org.hinsun.music.presentation.graphs.CurvedBottomNavigation
 import org.hinsun.music.presentation.graphs.SwipeRoute
-import org.hinsun.music.presentation.swipe.about.AboutView
 import org.hinsun.music.presentation.swipe.bookmark.BookmarkView
 import org.hinsun.music.presentation.swipe.home.HomeView
+import org.hinsun.music.presentation.swipe.more.MoreView
 import org.hinsun.music.presentation.swipe.save.SaveView
 import org.hinsun.music.presentation.swipe.setting.SettingView
 
@@ -55,9 +52,9 @@ val items = listOf(
         route = SwipeRoute.SETTING
     ),
     BottomNavItem(
-        title = "About",
-        icon = R.drawable.ic_about,
-        route = SwipeRoute.ABOUT
+        title = "More",
+        icon = R.drawable.ic_more,
+        route = SwipeRoute.MORE
     )
 )
 
@@ -109,7 +106,7 @@ fun SharedTransitionScope.SwipeView(
             composable(SwipeRoute.BOOKMARK.path) { BookmarkView() }
             composable(SwipeRoute.SAVE.path) { SaveView(navHostController) }
             composable(SwipeRoute.SETTING.path) { SettingView(navHostController) }
-            composable(SwipeRoute.ABOUT.path) { AboutView() }
+            composable(SwipeRoute.MORE.path) { MoreView(navHostController) }
         }
     }
 }

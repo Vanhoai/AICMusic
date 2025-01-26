@@ -1,8 +1,5 @@
 package org.hinsun.music.presentation.swipe.home
 
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
@@ -33,7 +30,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import org.hinsun.music.R
 import org.hinsun.music.design.theme.AppTheme
-import org.hinsun.music.design.widgets.base.BaseScaffold
 import org.hinsun.music.design.widgets.shared.SharedCardSong
 import org.hinsun.music.design.widgets.shared.SharedGradientOutlineImage
 import org.hinsun.music.design.widgets.shared.SharedPlaylistCard
@@ -43,9 +39,6 @@ import org.hinsun.music.presentation.graphs.NavRoute
 @Composable
 fun HomeView(navHostController: NavHostController) {
     val scrollState = rememberScrollState()
-
-    val idName = 1000
-    val idImage = 2000
 
     LazyColumn(
         modifier = Modifier
@@ -81,7 +74,7 @@ fun HomeView(navHostController: NavHostController) {
             for (i in 0..4) {
                 SharedCardSong(
                     onPress = {
-                        navHostController.navigate("${NavRoute.PLAYER.path}/${idImage}/${idName}")
+                        navHostController.navigate(NavRoute.PLAYER.path)
                     }
                 )
             }

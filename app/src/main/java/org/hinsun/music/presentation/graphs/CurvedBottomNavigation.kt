@@ -102,7 +102,7 @@ fun SharedTransitionScope.CurvedBottomNavigation(
             SwipeRoute.BOOKMARK.path -> i = 1
             SwipeRoute.SAVE.path -> i = 2
             SwipeRoute.SETTING.path -> i = 3
-            SwipeRoute.ABOUT.path -> i = 4
+            SwipeRoute.MORE.path -> i = 4
         }
 
         return (-2f * alpha) + (i * alpha)

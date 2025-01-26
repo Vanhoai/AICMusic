@@ -1,4 +1,4 @@
-package org.hinsun.music.presentation.swipe.setting
+package org.hinsun.music.presentation.swipe.more
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.gestures.Orientation
@@ -20,72 +20,68 @@ import androidx.navigation.NavHostController
 import org.hinsun.music.R
 import org.hinsun.music.design.widgets.shared.SharedGradientOutlineImage
 import org.hinsun.music.presentation.graphs.NavRoute
+import org.hinsun.music.presentation.swipe.setting.settingGroups
 import org.hinsun.music.presentation.swipe.widgets.GroupOption
 import org.hinsun.music.presentation.swipe.widgets.OptionNavigate
 import org.hinsun.music.presentation.swipe.widgets.SingleOption
 
-val settingGroups = listOf(
+
+val moreGroups = listOf(
     GroupOption(
-        name = "Appearance",
+        name = "Account",
         options = listOf(
             SingleOption(
-                name = "Theme & Language",
-                icon = R.drawable.ic_light,
+                name = "Profile",
+                icon = R.drawable.ic_account,
                 background = Color(0xFF5C95FF),
                 route = NavRoute.APPEARANCE
             ),
             SingleOption(
-                name = "Animation",
-                icon = R.drawable.ic_animation,
+                name = "Notification",
+                icon = R.drawable.ic_notification,
                 background = Color(0xFFFFA85C),
                 route = NavRoute.ANIMATION
             ),
         ),
     ),
     GroupOption(
-        name = "Music",
+        name = "Security",
         options = listOf(
             SingleOption(
-                name = "Audio",
-                icon = R.drawable.ic_audio_outline,
-                background = Color(0xFF14D01A),
+                name = "Biometric Authentication",
+                icon = R.drawable.ic_fingerprint,
+                background = Color(0xFFFF7A5C),
                 route = NavRoute.AUDIO
             ),
             SingleOption(
-                name = "Downloading",
-                icon = R.drawable.ic_downloading,
-                background = Color(0xFF14D01A),
+                name = "Privacy & Policy",
+                icon = R.drawable.ic_privacy,
+                background = Color(0xFFFF7A5C),
                 route = NavRoute.DOWNLOADING
-            ),
-            SingleOption(
-                name = "Storage",
-                icon = R.drawable.ic_storage,
-                background = Color(0xFF14D01A),
-                route = NavRoute.STORAGE
-            ),
-            SingleOption(
-                name = "Style player music",
-                icon = R.drawable.ic_style,
-                background = Color(0xFF14D01A),
-                route = NavRoute.STYLE
             ),
         ),
     ),
     GroupOption(
-        name = "Advanced",
+        name = "About",
         options = listOf(
             SingleOption(
-                name = "Developer options",
-                icon = R.drawable.ic_develop,
+                name = "About Hinsun Music",
+                icon = R.drawable.ic_audio,
                 background = Color(0xFFB7B7B7),
-                route = NavRoute.DEVELOPER
+                route = NavRoute.AUDIO
+            ),
+            SingleOption(
+                name = "Contact Us",
+                icon = R.drawable.ic_about,
+                background = Color(0xFFB7B7B7),
+                route = NavRoute.DOWNLOADING
             ),
         ),
-    )
+    ),
 )
 
 @Composable
-fun SettingView(navHostController: NavHostController) {
+fun MoreView(navHostController: NavHostController) {
     val scrollState = rememberScrollState()
 
     LazyColumn(
@@ -112,7 +108,7 @@ fun SettingView(navHostController: NavHostController) {
 
         item {
             OptionNavigate(
-                groups = settingGroups,
+                groups = moreGroups,
                 onPressOption = { path -> navHostController.navigate(path) }
             )
         }

@@ -1,6 +1,5 @@
-package org.hinsun.music.presentation.swipe.setting.widgets
+package org.hinsun.music.presentation.swipe.widgets
 
-import android.annotation.SuppressLint
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -43,68 +43,11 @@ data class GroupOption(
     val options: List<SingleOption>
 )
 
-val groups = listOf(
-    GroupOption(
-        name = "Appearance",
-        options = listOf(
-            SingleOption(
-                name = "Theme & Language",
-                icon = R.drawable.ic_light,
-                background = Color(0xFF5C95FF),
-                route = NavRoute.APPEARANCE
-            ),
-            SingleOption(
-                name = "Animation",
-                icon = R.drawable.ic_animation,
-                background = Color(0xFFFFA85C),
-                route = NavRoute.ANIMATION
-            ),
-        ),
-    ),
-    GroupOption(
-        name = "Music",
-        options = listOf(
-            SingleOption(
-                name = "Audio",
-                icon = R.drawable.ic_audio_outline,
-                background = Color(0xFF14D01A),
-                route = NavRoute.AUDIO
-            ),
-            SingleOption(
-                name = "Downloading",
-                icon = R.drawable.ic_downloading,
-                background = Color(0xFF14D01A),
-                route = NavRoute.DOWNLOADING
-            ),
-            SingleOption(
-                name = "Storage",
-                icon = R.drawable.ic_storage,
-                background = Color(0xFF14D01A),
-                route = NavRoute.STORAGE
-            ),
-            SingleOption(
-                name = "Style player music",
-                icon = R.drawable.ic_style,
-                background = Color(0xFF14D01A),
-                route = NavRoute.STYLE
-            ),
-        ),
-    ),
-    GroupOption(
-        name = "Advanced",
-        options = listOf(
-            SingleOption(
-                name = "Developer options",
-                icon = R.drawable.ic_develop,
-                background = Color(0xFFB7B7B7),
-                route = NavRoute.DEVELOPER
-            ),
-        ),
-    )
-)
-
 @Composable
-fun OptionNavigate(onPressOption: (path: String) -> Unit) {
+fun OptionNavigate(
+    groups: List<GroupOption>,
+    onPressOption: (path: String) -> Unit
+) {
     val interactionSource = remember { MutableInteractionSource() }
 
     groups.forEach { group ->
@@ -152,7 +95,9 @@ fun OptionNavigate(onPressOption: (path: String) -> Unit) {
                         ) {
                             Image(
                                 painter = painterResource(option.icon),
-                                contentDescription = null
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp),
+                                colorFilter = ColorFilter.tint(Color.White)
                             )
                         }
 
