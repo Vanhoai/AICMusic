@@ -45,6 +45,14 @@ googleid = "1.1.1"
 # Biometric
 biometric = "1.4.0-alpha02"
 
+# Retrofit
+retrofit = "2.11.0"
+converter-gson = "2.11.0"
+appcompat = "1.7.0"
+material = "1.12.0"
+appcompatVersion = "1.7.0"
+materialVersion = "1.12.0"
+
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -117,6 +125,10 @@ googleid = { module = "com.google.android.libraries.identity.googleid:googleid",
 # Biometric
 biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 
+# Retrofit
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converter-gson" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
@@ -130,3 +142,4 @@ ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 
 # google services
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
+android-library = { id = "com.android.library", version.ref = "agp" }

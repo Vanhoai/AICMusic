@@ -23,10 +23,13 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import kotlinx.coroutines.launch
+import org.hinsun.domain.usecases.OAuthUseCase
 import timber.log.Timber
 
 @HiltViewModel
-class AuthViewModel @Inject constructor() : ViewModel() {
+class AuthViewModel @Inject constructor(
+    private val oAuthUseCase: OAuthUseCase
+) : ViewModel() {
 
     @OptIn(ExperimentalUuidApi::class)
     val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
@@ -95,7 +98,7 @@ class AuthViewModel @Inject constructor() : ViewModel() {
                         // purposes, but don't use them to store or control access to user
                         // data. For that you first need to validate the token:
                         // pass googleIdTokenCredential.getIdToken() to the backend server.
-                        
+
                     } catch (e: GoogleIdTokenParsingException) {
                         e.printStackTrace()
                     }

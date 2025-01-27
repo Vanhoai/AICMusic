@@ -146,6 +146,10 @@ dependencies {
 
     // Biometric
     implementation(libs.biometric)
+
+    implementation(project(":core"))
+    implementation(project(":domain"))
+    implementation(project(":infrastructure"))
 }
 
 ksp {
