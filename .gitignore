@@ -12,8 +12,9 @@
 /captures
 .externalNativeBuild
 .cxx
+
 local.properties
+keystore.properties
 
 */keystore.jks
-keystore.properties
 */google-services.json
