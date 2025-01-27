@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "org.ic.tech.core"
+    namespace = "org.hinsun.core"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "org.ic.tech.core"
+        applicationId = "org.hinsun.core"
         minSdk = 24
         //noinspection OldTargetApi
         targetSdk = 34
@@ -39,8 +39,6 @@ android {
 dependencies {
 
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

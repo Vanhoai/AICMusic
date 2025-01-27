@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "357539376858",
+    "project_id": "hinsunmusic",
+    "storage_bucket": "hinsunmusic.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:357539376858:android:c00fccf50772d453ffbfe3",
+        "android_client_info": {
+          "package_name": "org.hinsun.music"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "357539376858-e488ae0tpq22mhoids141oqgvrsmpi2j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.hinsun.music",
+            "certificate_hash": "af8ad5cc0ebf9d5ae075297ec82a3e69af5a7d30"
+          }
+        },
+        {
+          "client_id": "357539376858-mn6oq9vaqa5a62a1rge2mlkh626v9b28.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "org.hinsun.music",
+            "certificate_hash": "10a317bfb9af427904c0e9ee39de66c5b5813dcb"
+          }
+        },
+        {
+          "client_id": "357539376858-9376m2sgli7grci0lsonvtdd03ooglhs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4sbSxYejQNNkPDYQr-GxqnmDtElHx6QE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "357539376858-9376m2sgli7grci0lsonvtdd03ooglhs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,5 +1,6 @@
 package org.hinsun.music.presentation.auth.widgets
 
+import android.content.Context
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -14,9 +15,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.android.gms.auth.api.identity.BeginSignInRequest
+import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdTokenRequestOptions
+import com.google.android.gms.auth.api.identity.Identity
+import com.google.android.gms.auth.api.identity.SignInClient
+import org.hinsun.music.BuildConfig
 import org.hinsun.music.design.theme.AppTheme
 import org.hinsun.music.design.widgets.base.BaseButton
 
@@ -26,12 +33,13 @@ fun SocialButton(
     text: String,
     size: Int,
     @DrawableRes icon: Int,
-    onClick: () -> Unit
+    onPress: () -> Unit
 ) {
     BaseButton(
         modifier = Modifier
             .padding(horizontal = 20.dp)
-            .padding(top = 20.dp)
+            .padding(top = 20.dp),
+        onPress = onPress
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -58,18 +66,21 @@ fun SocialButton(
 }
 
 @Composable
-fun SocialButtons() {
+fun SocialButtons(
+    onGoogleSignIn: () -> Unit,
+    onAppleSignIn: () -> Unit
+) {
     SocialButton(
         text = "Continue with Google",
         icon = org.hinsun.music.R.drawable.google,
         size = 32,
-        onClick = {}
+        onPress = onGoogleSignIn
     )
 
     SocialButton(
         text = "Continue with Apple",
         icon = org.hinsun.music.R.drawable.apple,
         size = 36,
-        onClick = {}
+        onPress = onAppleSignIn
     )
 }

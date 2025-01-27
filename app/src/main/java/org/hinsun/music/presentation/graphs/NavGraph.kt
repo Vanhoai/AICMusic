@@ -22,13 +22,13 @@ import org.hinsun.music.presentation.swipe.setting.music.storage.StorageView
 import org.hinsun.music.presentation.swipe.setting.music.style.StyleView
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-@RequiresApi(Build.VERSION_CODES.Q)
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @Composable
 fun NavGraph(navHostController: NavHostController) {
     SharedTransitionLayout {
         NavHost(
             navController = navHostController,
-            startDestination = NavRoute.SWIPE.path
+            startDestination = NavRoute.AUTH.path
         ) {
             composable(NavRoute.ONBOARD.path) { OnBoardView(navHostController) }
             composable(NavRoute.AUTH.path) { AuthView(navHostController) }

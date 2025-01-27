@@ -1,10 +1,21 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.google.services)
 }
+
+val keyStoreFile = rootProject.file("keystore.properties")
+val keyStoreProperties = Properties()
+if (keyStoreFile.exists()) keyStoreProperties.load(keyStoreFile.inputStream())
+
+val localFile = rootProject.file("local.properties")
+val localProperties = Properties()
+if (localFile.exists()) localProperties.load(localFile.inputStream())
 
 android {
     namespace = "org.hinsun.music"
@@ -21,6 +32,15 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file(keyStoreProperties["storeFile"].toString())
+            storePassword = keyStoreProperties["storePassword"].toString()
+            keyAlias = keyStoreProperties["keyAlias"].toString()
+            keyPassword = keyStoreProperties["keyPassword"].toString()
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
@@ -28,17 +48,30 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug")
+
+            signingConfig = signingConfigs.getByName("release")
+        }
+
+        debug {
+            buildConfigField(
+                "String",
+                "WEB_CLIENT_ID",
+                "\"${localProperties.getProperty("webClientId")}\""
+            )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
     kotlinOptions {
         jvmTarget = "11"
     }
+
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 }
@@ -98,6 +131,21 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
+
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.messaging)
+
+    // Play service auth
+    implementation(libs.play.services.auth)
+    implementation(libs.credentials)
+    implementation(libs.credentials.play.services.auth)
+    implementation(libs.googleid)
+
+    // Biometric
+    implementation(libs.biometric)
 }
 
 ksp {
