@@ -6,6 +6,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import org.hinsun.core.storage.AppStorage
+import org.hinsun.core.storage.CryptoStorage
+import org.hinsun.core.storage.CryptoStorageImpl
 import org.hinsun.core.storage.HinsunStorage
 import org.hinsun.core.storage.HinsunStorageImpl
 import javax.inject.Singleton
@@ -24,5 +26,11 @@ class CoreModule {
     @Singleton
     fun provideAppStorage(hinsunStorage: HinsunStorage): AppStorage {
         return AppStorage(hinsunStorage)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCryptoStorage(hinsunStorage: HinsunStorage): CryptoStorage {
+        return CryptoStorageImpl(hinsunStorage)
     }
 }

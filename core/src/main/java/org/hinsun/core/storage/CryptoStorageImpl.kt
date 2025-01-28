@@ -8,16 +8,16 @@ import java.security.KeyStore
 import java.security.PublicKey
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
-import javax.crypto.SecretKey
-import javax.crypto.spec.GCMParameterSpec
 import javax.inject.Inject
 import android.util.Base64
+import com.google.gson.Gson
+import javax.crypto.SecretKey
+import javax.crypto.spec.GCMParameterSpec
 
 class CryptoStorageImpl @Inject constructor(
     private val hinsunStorage: HinsunStorage
-) {
+) : CryptoStorage {
     private val keyStore: KeyStore = KeyStore.getInstance(ANDROID_KEYSTORE)
-    private var cipher: Cipher = Cipher.getInstance(TRANSFORMATION)
 
     init {
         keyStore.load(null)
@@ -30,6 +30,9 @@ class CryptoStorageImpl @Inject constructor(
 
     private val privateKeyEntry: KeyStore.PrivateKeyEntry
         get() = keyStore.getEntry(KEY_ALIAS, null) as KeyStore.PrivateKeyEntry
+
+    private val secretKey: SecretKey
+        get() = keyStore.getKey(KEY_ALIAS, null) as SecretKey
 
     private fun createSecretKey() {
         val keyGenParams = KeyGenParameterSpec.Builder(
@@ -46,18 +49,38 @@ class CryptoStorageImpl @Inject constructor(
         keyGenerator.generateKey()
     }
 
-    private fun encrypt(value: String): String {
-        cipher.init(Cipher.ENCRYPT_MODE, publicKey)
-        val encrypt = cipher.doFinal(value.toByteArray(Charsets.UTF_8))
-        return Base64.encodeToString(encrypt, Base64.DEFAULT)
+    override fun initEncryptionCipher(): Cipher {
+        val cipher = Cipher.getInstance(TRANSFORMATION)
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey)
+        return cipher
     }
 
-    private fun decrypt(value: String): String {
-        val privateKey = privateKeyEntry.privateKey
+    override fun initDecryptionCipher(initializationVector: ByteArray): Cipher {
+        val cipher = Cipher.getInstance(TRANSFORMATION)
+        val spec = GCMParameterSpec(128, initializationVector)
+        cipher.init(Cipher.DECRYPT_MODE, secretKey, spec)
+        return cipher
+    }
 
-        cipher.init(Cipher.DECRYPT_MODE, privateKey)
-        val decrypt = cipher.doFinal(Base64.decode(value, Base64.DEFAULT))
-        return String(decrypt)
+    override fun encrypt(value: String, cipher: Cipher): EncryptedData {
+        val encryptedBytes = cipher.doFinal(value.toByteArray(Charset.forName("UTF-8")))
+        return EncryptedData(encryptedBytes, cipher.iv)
+    }
+
+    override fun decrypt(value: ByteArray, cipher: Cipher): String {
+        val decryptedBytes = cipher.doFinal(value)
+        return String(decryptedBytes, Charset.forName("UTF-8"))
+    }
+
+    override fun writeWithEncrypt(key: String, value: EncryptedData): Boolean {
+        val json = Gson().toJson(value)
+        return hinsunStorage.write(key, json)
+    }
+
+    override fun readWithDecrypt(key: String): EncryptedData? {
+        val json = hinsunStorage.read(key, defaultValue = "")
+        if (json.isEmpty()) return null
+        return Gson().fromJson(json, EncryptedData::class.java)
     }
 
     companion object {
@@ -69,5 +92,23 @@ class CryptoStorageImpl @Inject constructor(
         private const val PADDING = KeyProperties.ENCRYPTION_PADDING_NONE
 
         private const val TRANSFORMATION = "$ALGORITHMS/$BLOCK_MODE/$PADDING"
+    }
+}
+
+data class EncryptedData(val ciphertext: ByteArray, val initializationVector: ByteArray) {
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as EncryptedData
+
+        if (!ciphertext.contentEquals(other.ciphertext)) return false
+        return initializationVector.contentEquals(other.initializationVector)
+    }
+
+    override fun hashCode(): Int {
+        var result = ciphertext.contentHashCode()
+        result = 31 * result + initializationVector.contentHashCode()
+        return result
     }
 }

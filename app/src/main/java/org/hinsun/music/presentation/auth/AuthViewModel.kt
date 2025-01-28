@@ -11,7 +11,11 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 import android.os.Build
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.biometric.BiometricManager
+import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
@@ -19,6 +23,7 @@ import androidx.credentials.GetCredentialRequest.Builder
 import androidx.credentials.GetCredentialResponse
 import androidx.credentials.PasswordCredential
 import androidx.credentials.PublicKeyCredential
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.auth.api.Auth
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
@@ -28,13 +33,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.hinsun.core.https.HttpResponse
+import org.hinsun.core.storage.CryptoStorage
 import org.hinsun.domain.models.OAuthRequest
 import org.hinsun.domain.usecases.OAuthUseCase
 import timber.log.Timber
+import java.util.UUID
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val oAuthUseCase: OAuthUseCase
+    private val oAuthUseCase: OAuthUseCase,
+    private val cryptoStorage: CryptoStorage
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
@@ -67,6 +75,123 @@ class AuthViewModel @Inject constructor(
             } catch (e: GetCredentialException) {
                 e.printStackTrace()
             }
+        }
+    }
+
+    fun signInWithBiometric(context: Context) {
+        val isBiometricAvailable = isBiometricAvailable(context)
+        if (!isBiometricAvailable) {
+            Toast.makeText(context, "Biometric authentication not available", Toast.LENGTH_SHORT)
+                .show()
+            return
+        }
+
+        Toast.makeText(context, "Biometric authentication available", Toast.LENGTH_SHORT).show()
+    }
+
+    // Create BiometricPrompt.PromptInfo with customized display text
+    private fun getPromptInfo(context: FragmentActivity): BiometricPrompt.PromptInfo {
+        return BiometricPrompt.PromptInfo.Builder()
+            .setTitle("Biometric Authentication")
+            .setSubtitle("Authenticate to access your account")
+            .setDescription("Please authenticate to access your account")
+            .setConfirmationRequired(false)
+            .setNegativeButtonText("Cancel")
+            .build()
+    }
+
+    // Retrieve a BiometricPrompt instance with a predefined callback
+    private fun getBiometricPrompt(
+        context: FragmentActivity,
+        onAuthSucceed: (BiometricPrompt.AuthenticationResult) -> Unit
+    ): BiometricPrompt {
+        val biometricPrompt =
+            BiometricPrompt(
+                context,
+                ContextCompat.getMainExecutor(context),
+                object : BiometricPrompt.AuthenticationCallback() {
+                    // Handle successful authentication
+                    override fun onAuthenticationSucceeded(
+                        result: BiometricPrompt.AuthenticationResult
+                    ) {
+                        Timber.tag(TAG).d("Authentication Succeeded: ${result.cryptoObject}")
+                        // Execute custom action on successful authentication
+                        onAuthSucceed(result)
+                    }
+
+                    // Handle authentication errors
+                    override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
+                        Timber.tag(TAG).d("Authentication Error: $errorCode $errString")
+                    }
+
+                    // Handle authentication failures
+                    override fun onAuthenticationFailed() {
+                        Timber.tag(TAG).d("Authentication Failed")
+                    }
+                }
+            )
+        return biometricPrompt
+    }
+
+    // Register user biometrics by encrypting a randomly generated token
+    fun register(
+        context: FragmentActivity,
+        onSuccess: (authResult: BiometricPrompt.AuthenticationResult) -> Unit = {}
+    ) {
+        val cipher = cryptoStorage.initEncryptionCipher()
+
+        val biometricPrompt = getBiometricPrompt(context) { authResult ->
+            authResult.cryptoObject?.cipher?.let { cipher ->
+                // Dummy token for now(in production app, generate a unique and genuine token
+                // for each user registration or consider using token received from authentication server)
+                val token = UUID.randomUUID().toString()
+                Toast.makeText(context, "Encrypting token: $token", Toast.LENGTH_SHORT).show()
+                val encryptedToken = cryptoStorage.encrypt(token, cipher)
+
+                cryptoStorage.writeWithEncrypt(
+                    key = "ENCRYPTED_FILE_NAME",
+                    value = encryptedToken
+                )
+
+                // Execute custom action on successful registration
+                onSuccess(authResult)
+            }
+        }
+
+        biometricPrompt.authenticate(getPromptInfo(context), BiometricPrompt.CryptoObject(cipher))
+    }
+
+    // Authenticate user using biometrics by decrypting stored token
+    fun authenticate(
+        context: FragmentActivity,
+        onSuccess: (plainText: String) -> Unit
+    ) {
+
+        val encryptedData = cryptoStorage.readWithDecrypt(key = "ENCRYPTED_FILE_NAME")
+
+        encryptedData?.let { data ->
+            val cipher = cryptoStorage.initDecryptionCipher(data.initializationVector)
+
+            val biometricPrompt = getBiometricPrompt(context) { authResult ->
+                authResult.cryptoObject?.cipher?.let { cipher ->
+                    val plainText = cryptoStorage.decrypt(data.ciphertext, cipher)
+                    // Execute custom action on successful authentication
+                    Toast.makeText(context, "Decrypted token: $plainText", Toast.LENGTH_SHORT)
+                        .show()
+                    onSuccess(plainText)
+                }
+            }
+
+            val promptInfo = getPromptInfo(context)
+            biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
+        }
+    }
+
+    private fun isBiometricAvailable(context: Context): Boolean {
+        val biometricManager = BiometricManager.from(context)
+        return when (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG or BiometricManager.Authenticators.BIOMETRIC_WEAK)) {
+            BiometricManager.BIOMETRIC_SUCCESS -> true
+            else -> false
         }
     }
 
