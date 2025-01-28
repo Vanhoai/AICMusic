@@ -49,6 +49,12 @@ android {
                 "proguard-rules.pro"
             )
 
+            buildConfigField(
+                "String",
+                "WEB_CLIENT_ID",
+                "\"${localProperties.getProperty("webClientId")}\""
+            )
+
             signingConfig = signingConfigs.getByName("release")
         }
 
@@ -146,6 +152,12 @@ dependencies {
 
     // Biometric
     implementation(libs.biometric)
+
+    // Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
 
     implementation(project(":core"))
     implementation(project(":domain"))

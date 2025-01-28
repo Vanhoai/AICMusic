@@ -6,6 +6,8 @@ import dagger.hilt.components.SingletonComponent
 
 @Module(
     includes = [
+        CoreModule::class,
+        NetworkModule::class,
         RepositoryModule::class,
         UseCaseModule::class,
     ]

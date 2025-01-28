@@ -14,7 +14,6 @@
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/domain" />
             <option value="$PROJECT_DIR$/infrastructure" />
-            <option value="$PROJECT_DIR$/processor" />
           </set>
         </option>
         <option name="resolveExternalAnnotations" value="false" />

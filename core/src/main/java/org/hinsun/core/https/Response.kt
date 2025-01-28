@@ -1,18 +1,38 @@
 package org.hinsun.core.https
 
-sealed class BaseResponse {
-    abstract val statusCode: Int
-    abstract val message: String
-}
 
 data class Response<T>(
-    override val statusCode: Int,
-    override val message: String,
-    val payload: T
-) : BaseResponse()
+    val status: Int,
+    val message: String,
+    val data: T? = null
+) {
+    fun isSuccess(): Boolean {
+        return HttpStatusCode.isSuccess(status)
+    }
 
+    fun isFailure(): Boolean {
+        return !HttpStatusCode.isSuccess(status)
+    }
+}
 
-data class Failure(
-    override val statusCode: Int,
-    override val message: String,
-) : BaseResponse()
+interface Failure {
+    val cause: Throwable?
+
+    data class RequestFailure(
+        val status: Int,
+        val message: String? = "Request failed",
+        override val cause: Throwable? = null
+    ) : Failure
+
+    data class IOFailure(
+        val status: Int,
+        val message: String? = "IO failed",
+        override val cause: Throwable? = null
+    ) : Failure
+
+    data class ExceptionFailure(
+        val status: Int,
+        val message: String? = "Exception failed",
+        override val cause: Throwable? = null
+    ) : Failure
+}

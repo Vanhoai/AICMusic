@@ -20,9 +20,15 @@ import androidx.credentials.GetCredentialResponse
 import androidx.credentials.PasswordCredential
 import androidx.credentials.PublicKeyCredential
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.auth.api.Auth
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import org.hinsun.core.https.HttpResponse
+import org.hinsun.domain.models.OAuthRequest
 import org.hinsun.domain.usecases.OAuthUseCase
 import timber.log.Timber
 
@@ -30,6 +36,9 @@ import timber.log.Timber
 class AuthViewModel @Inject constructor(
     private val oAuthUseCase: OAuthUseCase
 ) : ViewModel() {
+
+    private val _uiState = MutableStateFlow(AuthUiState())
+    val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
     @OptIn(ExperimentalUuidApi::class)
     val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
@@ -61,7 +70,37 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    private fun callToServer(idToken: String) {
+        viewModelScope.launch {
+            val response = oAuthUseCase.invoke(
+                OAuthRequest(
+                    idToken = idToken,
+                    deviceToken = idToken
+                )
+            )
+
+            response.collect { httpResponse ->
+                when (httpResponse) {
+                    is HttpResponse.HttpSuccess -> {
+                        Timber.tag(TAG).d("Success: $httpResponse")
+                    }
+
+                    is HttpResponse.HttpFailure -> {
+                        Timber.tag(TAG).d("Failure: $httpResponse")
+                    }
+
+                    is HttpResponse.HttpProcess -> {
+                        Timber.tag(TAG).d("Process: $httpResponse")
+                    }
+                }
+            }
+        }
+    }
+
     private fun handleSignIn(result: GetCredentialResponse) {
+
+        Timber.tag(TAG).d("Result: $result and stating flow")
+
         // Handle the successfully returned credential.
         when (val credential = result.credential) {
             // Passkey credential
@@ -99,6 +138,9 @@ class AuthViewModel @Inject constructor(
                         // data. For that you first need to validate the token:
                         // pass googleIdTokenCredential.getIdToken() to the backend server.
 
+
+                        callToServer(googleIdTokenCredential.idToken)
+
                     } catch (e: GoogleIdTokenParsingException) {
                         e.printStackTrace()
                     }
@@ -116,6 +158,6 @@ class AuthViewModel @Inject constructor(
     }
 
     companion object {
-        const val TAG = "AuthViewModel"
+        const val TAG = "HinsunMusic"
     }
 }

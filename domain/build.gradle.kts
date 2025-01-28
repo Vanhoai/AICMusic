@@ -41,12 +41,16 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    implementation(project(":core"))
+
+    // Arrow
     implementation(libs.arrow.core)
     implementation(libs.arrow.fx.coroutines)
 
-    // hilt
+    // Hilt
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
 
-    implementation(project(":core"))
+    // Timber
+    implementation(libs.timber)
 }

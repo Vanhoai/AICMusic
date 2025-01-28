@@ -31,8 +31,10 @@ import org.hinsun.music.presentation.auth.widgets.SocialButtons
 
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @Composable
-fun AuthView(navHostController: NavHostController) {
-    val viewModel = hiltViewModel<AuthViewModel>()
+fun AuthView(
+    navHostController: NavHostController,
+    viewModel: AuthViewModel = hiltViewModel<AuthViewModel>()
+) {
     val context = LocalContext.current
 
     BaseScaffold { innerPadding ->

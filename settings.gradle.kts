@@ -26,6 +26,8 @@ include(":app")
 
 // Sub modules
 include(":core")
-include(":processor")
-include(":infrastructure")
 include(":domain")
+//include(":processor")
+
+
+include(":infrastructure")
