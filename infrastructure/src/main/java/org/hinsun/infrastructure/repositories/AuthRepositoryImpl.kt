@@ -16,12 +16,8 @@ class AuthRepositoryImpl @Inject constructor(
     private val authRemoteDatasource: AuthRemoteDatasource,
     private val accountLocalDatasource: AccountLocalDatasource
 ) : AuthRepository {
-
     override suspend fun oAuth(req: OAuthRequest): Either<Failure, Response<OAuthResponse>> {
         try {
-            val posts = authRemoteDatasource.getPosts()
-            Timber.tag("HinsunMusic").d("Posts: $posts")
-
             val response = authRemoteDatasource.oauth()
             return Either.Right(response)
         } catch (ioException: IOException) {
