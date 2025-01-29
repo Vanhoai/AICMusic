@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.hinsun.core.https.HttpResponse
+import org.hinsun.core.storage.AppStorage
 import org.hinsun.core.storage.CryptoStorage
 import org.hinsun.domain.models.OAuthRequest
 import org.hinsun.domain.usecases.OAuthUseCase
@@ -42,7 +43,8 @@ import java.util.UUID
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val oAuthUseCase: OAuthUseCase,
-    private val cryptoStorage: CryptoStorage
+    private val cryptoStorage: CryptoStorage,
+    private val appStorage: AppStorage
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(AuthUiState())
@@ -58,23 +60,20 @@ class AuthViewModel @Inject constructor(
         .build()
 
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-    fun signIn(context: Context) {
+    fun signInWithGoogle(context: Context) {
         viewModelScope.launch {
-            try {
-                val credentialManager = CredentialManager.create(context)
+            val credentialManager = CredentialManager.create(context)
 
-                val request: GetCredentialRequest = Builder()
-                    .addCredentialOption(googleIdOption)
-                    .build()
+            val request: GetCredentialRequest = Builder()
+                .addCredentialOption(googleIdOption)
+                .build()
 
-                val result = credentialManager.getCredential(
-                    request = request,
-                    context = context,
-                )
-                handleSignIn(result)
-            } catch (e: GetCredentialException) {
-                e.printStackTrace()
-            }
+            val result = credentialManager.getCredential(
+                request = request,
+                context = context,
+            )
+
+            oAuthGoogle(result)
         }
     }
 
@@ -90,10 +89,9 @@ class AuthViewModel @Inject constructor(
     }
 
     // Create BiometricPrompt.PromptInfo with customized display text
-    private fun getPromptInfo(context: FragmentActivity): BiometricPrompt.PromptInfo {
+    private fun getPromptInfo(): BiometricPrompt.PromptInfo {
         return BiometricPrompt.PromptInfo.Builder()
             .setTitle("Biometric Authentication")
-            .setSubtitle("Authenticate to access your account")
             .setDescription("Please authenticate to access your account")
             .setConfirmationRequired(false)
             .setNegativeButtonText("Cancel")
@@ -136,6 +134,7 @@ class AuthViewModel @Inject constructor(
     // Register user biometrics by encrypting a randomly generated token
     fun register(
         context: FragmentActivity,
+        plainText: String,
         onSuccess: (authResult: BiometricPrompt.AuthenticationResult) -> Unit = {}
     ) {
         val cipher = cryptoStorage.initEncryptionCipher()
@@ -144,12 +143,10 @@ class AuthViewModel @Inject constructor(
             authResult.cryptoObject?.cipher?.let { cipher ->
                 // Dummy token for now(in production app, generate a unique and genuine token
                 // for each user registration or consider using token received from authentication server)
-                val token = UUID.randomUUID().toString()
-                Toast.makeText(context, "Encrypting token: $token", Toast.LENGTH_SHORT).show()
-                val encryptedToken = cryptoStorage.encrypt(token, cipher)
+                val encryptedToken = cryptoStorage.encrypt(plainText, cipher)
 
                 cryptoStorage.writeWithEncrypt(
-                    key = "ENCRYPTED_FILE_NAME",
+                    key = BuildConfig.BIOMETRIC_KEY,
                     value = encryptedToken
                 )
 
@@ -158,7 +155,7 @@ class AuthViewModel @Inject constructor(
             }
         }
 
-        biometricPrompt.authenticate(getPromptInfo(context), BiometricPrompt.CryptoObject(cipher))
+        biometricPrompt.authenticate(getPromptInfo(), BiometricPrompt.CryptoObject(cipher))
     }
 
     // Authenticate user using biometrics by decrypting stored token
@@ -166,9 +163,13 @@ class AuthViewModel @Inject constructor(
         context: FragmentActivity,
         onSuccess: (plainText: String) -> Unit
     ) {
+        val isEnableBiometric = appStorage.readIsEnableBiometric()
+        if (!isEnableBiometric) {
+            Toast.makeText(context, "Biometric is not enabled", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-        val encryptedData = cryptoStorage.readWithDecrypt(key = "ENCRYPTED_FILE_NAME")
-
+        val encryptedData = cryptoStorage.readWithDecrypt(key = BuildConfig.BIOMETRIC_KEY)
         encryptedData?.let { data ->
             val cipher = cryptoStorage.initDecryptionCipher(data.initializationVector)
 
@@ -176,13 +177,11 @@ class AuthViewModel @Inject constructor(
                 authResult.cryptoObject?.cipher?.let { cipher ->
                     val plainText = cryptoStorage.decrypt(data.ciphertext, cipher)
                     // Execute custom action on successful authentication
-                    Toast.makeText(context, "Decrypted token: $plainText", Toast.LENGTH_SHORT)
-                        .show()
                     onSuccess(plainText)
                 }
             }
 
-            val promptInfo = getPromptInfo(context)
+            val promptInfo = getPromptInfo()
             biometricPrompt.authenticate(promptInfo, BiometricPrompt.CryptoObject(cipher))
         }
     }
@@ -195,7 +194,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    private fun callToServer(idToken: String) {
+    private fun callOAuthToServer(idToken: String) {
         viewModelScope.launch {
             val response = oAuthUseCase.invoke(
                 OAuthRequest(
@@ -222,10 +221,7 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    private fun handleSignIn(result: GetCredentialResponse) {
-
-        Timber.tag(TAG).d("Result: $result and stating flow")
-
+    private fun oAuthGoogle(result: GetCredentialResponse) {
         // Handle the successfully returned credential.
         when (val credential = result.credential) {
             // Passkey credential
@@ -245,6 +241,7 @@ class AuthViewModel @Inject constructor(
                 // Send ID and password to your server to validate and authenticate.
                 val username = credential.id
                 val password = credential.password
+                Timber.tag(TAG).d("Username: $username and password: $password")
             }
 
             // GoogleIdToken credential
@@ -255,19 +252,14 @@ class AuthViewModel @Inject constructor(
                         // authenticate on your server.
                         val googleIdTokenCredential = GoogleIdTokenCredential
                             .createFrom(credential.data)
-
-                        Timber.tag(TAG)
-                            .d("googleIdTokenCredential: ${googleIdTokenCredential.idToken}")
                         // You can use the members of googleIdTokenCredential directly for UX
                         // purposes, but don't use them to store or control access to user
                         // data. For that you first need to validate the token:
                         // pass googleIdTokenCredential.getIdToken() to the backend server.
 
-
-                        callToServer(googleIdTokenCredential.idToken)
-
-                    } catch (e: GoogleIdTokenParsingException) {
-                        e.printStackTrace()
+                        callOAuthToServer(googleIdTokenCredential.idToken)
+                    } catch (exception: GoogleIdTokenParsingException) {
+                        exception.printStackTrace()
                     }
                 } else {
                     // Catch any unrecognized custom credential type here.

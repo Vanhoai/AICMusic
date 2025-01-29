@@ -55,6 +55,12 @@ android {
                 "\"${localProperties.getProperty("webClientId")}\""
             )
 
+            buildConfigField(
+                "String",
+                "BIOMETRIC_KEY",
+                "\"${localProperties.getProperty("biometricKey")}\""
+            )
+
             signingConfig = signingConfigs.getByName("release")
         }
 
@@ -63,6 +69,12 @@ android {
                 "String",
                 "WEB_CLIENT_ID",
                 "\"${localProperties.getProperty("webClientId")}\""
+            )
+
+            buildConfigField(
+                "String",
+                "BIOMETRIC_KEY",
+                "\"${localProperties.getProperty("biometricKey")}\""
             )
         }
     }
