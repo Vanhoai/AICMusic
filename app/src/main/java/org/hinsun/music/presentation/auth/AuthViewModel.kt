@@ -77,7 +77,10 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun signInWithBiometric(context: Context) {
+    fun signInWithBiometric(
+        context: FragmentActivity,
+        onSuccess: (plainText: String) -> Unit
+    ) {
         val isBiometricAvailable = isBiometricAvailable(context)
         if (!isBiometricAvailable) {
             Toast.makeText(context, "Biometric authentication not available", Toast.LENGTH_SHORT)
@@ -85,13 +88,20 @@ class AuthViewModel @Inject constructor(
             return
         }
 
-        Toast.makeText(context, "Biometric authentication available", Toast.LENGTH_SHORT).show()
+//        val isEnableBiometric = appStorage.readIsEnableBiometric()
+//        if (!isEnableBiometric) {
+//            Toast.makeText(context, "Biometric is not enabled", Toast.LENGTH_SHORT).show()
+//            return
+//        }
+
+        authenticate(context, onSuccess)
     }
 
     // Create BiometricPrompt.PromptInfo with customized display text
     private fun getPromptInfo(): BiometricPrompt.PromptInfo {
         return BiometricPrompt.PromptInfo.Builder()
-            .setTitle("Biometric Authentication")
+            .setTitle("Hinsun Music")
+            .setSubtitle("Biometric Authentication")
             .setDescription("Please authenticate to access your account")
             .setConfirmationRequired(false)
             .setNegativeButtonText("Cancel")
@@ -159,16 +169,10 @@ class AuthViewModel @Inject constructor(
     }
 
     // Authenticate user using biometrics by decrypting stored token
-    fun authenticate(
+    private fun authenticate(
         context: FragmentActivity,
         onSuccess: (plainText: String) -> Unit
     ) {
-        val isEnableBiometric = appStorage.readIsEnableBiometric()
-        if (!isEnableBiometric) {
-            Toast.makeText(context, "Biometric is not enabled", Toast.LENGTH_SHORT).show()
-            return
-        }
-
         val encryptedData = cryptoStorage.readWithDecrypt(key = BuildConfig.BIOMETRIC_KEY)
         encryptedData?.let { data ->
             val cipher = cryptoStorage.initDecryptionCipher(data.initializationVector)
