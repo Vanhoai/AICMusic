@@ -1,5 +1,6 @@
 package org.hinsun.music.presentation.swipe
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Build
 import androidx.activity.compose.BackHandler
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -58,6 +60,7 @@ val items = listOf(
     )
 )
 
+@SuppressLint("ContextCastToActivity")
 @OptIn(ExperimentalSharedTransitionApi::class)
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
@@ -67,7 +70,7 @@ fun SharedTransitionScope.SwipeView(
 ) {
     val navController = rememberNavController()
 
-    val activity = LocalContext.current as Activity
+    val activity = LocalContext.current as FragmentActivity
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination
 

@@ -25,7 +25,7 @@ import org.hinsun.music.design.theme.AppTheme
 import org.hinsun.music.design.widgets.shared.SharedGradientButton
 
 @Composable
-fun BiometricButton() {
+fun BiometricButton(onPress: () -> Unit) {
     Column {
         Spacer(modifier = Modifier.height(20.dp))
         Spacer(
@@ -36,7 +36,10 @@ fun BiometricButton() {
                 .background(AppTheme.colors.textPrimary.copy(alpha = 0.1f))
         )
         Spacer(modifier = Modifier.height(20.dp))
-        SharedGradientButton(modifier = Modifier.padding(horizontal = 20.dp)) {
+        SharedGradientButton(
+            onPress = onPress,
+            modifier = Modifier.padding(horizontal = 20.dp)
+        ) {
             Row(
                 modifier = Modifier.fillMaxSize(),
                 horizontalArrangement = Arrangement.Center,

@@ -1,33 +1,45 @@
 package org.hinsun.music.presentation.auth
 
-import androidx.compose.foundation.Canvas
+import android.annotation.SuppressLint
+import android.os.Build
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.toBitmap
+import androidx.fragment.app.FragmentActivity
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import org.hinsun.music.R
 import org.hinsun.music.design.widgets.base.BaseScaffold
 import org.hinsun.music.design.widgets.shared.SharedWaveAnimation
 import org.hinsun.music.presentation.auth.widgets.AuthHeading
 import org.hinsun.music.presentation.auth.widgets.BiometricButton
 import org.hinsun.music.presentation.auth.widgets.SocialButtons
+import org.hinsun.music.presentation.graphs.NavRoute
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalUuidApi::class)
+@SuppressLint("ContextCastToActivity")
+@RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @Composable
-fun AuthView(navHostController: NavHostController) {
+fun AuthView(
+    navHostController: NavHostController,
+    viewModel: AuthViewModel = hiltViewModel<AuthViewModel>()
+) {
+    val context = LocalContext.current as FragmentActivity
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(uiState.value.isSignInSuccess) {
+        if (uiState.value.isSignInSuccess) navHostController.navigate(NavRoute.SWIPE.path)
+    }
+
     BaseScaffold { innerPadding ->
         Column(
             modifier = Modifier
@@ -35,8 +47,19 @@ fun AuthView(navHostController: NavHostController) {
                 .padding(innerPadding),
         ) {
             AuthHeading()
-            SocialButtons()
-            BiometricButton()
+            SocialButtons(
+                onGoogleSignIn = { viewModel.signInWithGoogle(context) },
+                onAppleSignIn = {}
+            )
+
+            BiometricButton(onPress = {
+                viewModel.signInWithBiometric(
+                    context = context,
+                    onSuccess = { message ->
+                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                    }
+                )
+            })
 
             Box(
                 modifier = Modifier.weight(1f)

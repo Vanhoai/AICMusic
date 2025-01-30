@@ -20,11 +20,9 @@ import androidx.navigation.NavHostController
 import org.hinsun.music.R
 import org.hinsun.music.design.widgets.shared.SharedGradientOutlineImage
 import org.hinsun.music.presentation.graphs.NavRoute
-import org.hinsun.music.presentation.swipe.setting.settingGroups
 import org.hinsun.music.presentation.swipe.widgets.GroupOption
 import org.hinsun.music.presentation.swipe.widgets.OptionNavigate
 import org.hinsun.music.presentation.swipe.widgets.SingleOption
-
 
 val moreGroups = listOf(
     GroupOption(
@@ -34,13 +32,13 @@ val moreGroups = listOf(
                 name = "Profile",
                 icon = R.drawable.ic_account,
                 background = Color(0xFF5C95FF),
-                route = NavRoute.APPEARANCE
+                route = NavRoute.PROFILE
             ),
             SingleOption(
                 name = "Notification",
                 icon = R.drawable.ic_notification,
                 background = Color(0xFFFFA85C),
-                route = NavRoute.ANIMATION
+                route = NavRoute.NOTIFICATION
             ),
         ),
     ),
@@ -51,13 +49,13 @@ val moreGroups = listOf(
                 name = "Biometric Authentication",
                 icon = R.drawable.ic_fingerprint,
                 background = Color(0xFFFF7A5C),
-                route = NavRoute.AUDIO
+                route = NavRoute.AUTHENTICATION
             ),
             SingleOption(
                 name = "Privacy & Policy",
                 icon = R.drawable.ic_privacy,
                 background = Color(0xFFFF7A5C),
-                route = NavRoute.DOWNLOADING
+                route = NavRoute.PRIVACY_POLICY
             ),
         ),
     ),
@@ -65,16 +63,16 @@ val moreGroups = listOf(
         name = "About",
         options = listOf(
             SingleOption(
-                name = "About Hinsun Music",
+                name = "About Me",
                 icon = R.drawable.ic_audio,
                 background = Color(0xFFB7B7B7),
-                route = NavRoute.AUDIO
+                route = NavRoute.ABOUT
             ),
             SingleOption(
-                name = "Contact Us",
+                name = "Contact Me",
                 icon = R.drawable.ic_about,
                 background = Color(0xFFB7B7B7),
-                route = NavRoute.DOWNLOADING
+                route = NavRoute.CONTACT
             ),
         ),
     ),
