@@ -15,4 +15,11 @@ enum class NavRoute(val path: String) {
 
     PLAYER("player"),
     PLAYLIST("playlist"),
+
+    PROFILE("profile"),
+    NOTIFICATION("notification"),
+    AUTHENTICATION("authentication"),
+    PRIVACY_POLICY("privacy_policy"),
+    ABOUT("about"),
+    CONTACT("contact"),
 }

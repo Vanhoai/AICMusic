@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.fragment.app.FragmentActivity
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import org.hinsun.music.design.widgets.base.BaseScaffold
 import org.hinsun.music.design.widgets.shared.SharedWaveAnimation
@@ -32,6 +34,11 @@ fun AuthView(
     viewModel: AuthViewModel = hiltViewModel<AuthViewModel>()
 ) {
     val context = LocalContext.current as FragmentActivity
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(uiState.value.isSignInSuccess) {
+        if (uiState.value.isSignInSuccess) navHostController.navigate(NavRoute.SWIPE.path)
+    }
 
     BaseScaffold { innerPadding ->
         Column(

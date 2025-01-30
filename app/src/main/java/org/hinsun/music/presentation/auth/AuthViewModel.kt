@@ -31,6 +31,7 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingExcept
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import org.hinsun.core.https.HttpResponse
 import org.hinsun.core.storage.AppStorage
@@ -60,8 +61,8 @@ class AuthViewModel @Inject constructor(
         .build()
 
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
-    fun signInWithGoogle(context: Context) {
-        viewModelScope.launch {
+    fun signInWithGoogle(context: Context) = viewModelScope.launch {
+        try {
             val credentialManager = CredentialManager.create(context)
 
             val request: GetCredentialRequest = Builder()
@@ -74,6 +75,8 @@ class AuthViewModel @Inject constructor(
             )
 
             oAuthGoogle(result)
+        } catch (exception: Exception) {
+            exception.printStackTrace()
         }
     }
 
@@ -141,33 +144,6 @@ class AuthViewModel @Inject constructor(
         return biometricPrompt
     }
 
-    // Register user biometrics by encrypting a randomly generated token
-    fun register(
-        context: FragmentActivity,
-        plainText: String,
-        onSuccess: (authResult: BiometricPrompt.AuthenticationResult) -> Unit = {}
-    ) {
-        val cipher = cryptoStorage.initEncryptionCipher()
-
-        val biometricPrompt = getBiometricPrompt(context) { authResult ->
-            authResult.cryptoObject?.cipher?.let { cipher ->
-                // Dummy token for now(in production app, generate a unique and genuine token
-                // for each user registration or consider using token received from authentication server)
-                val encryptedToken = cryptoStorage.encrypt(plainText, cipher)
-
-                cryptoStorage.writeWithEncrypt(
-                    key = BuildConfig.BIOMETRIC_KEY,
-                    value = encryptedToken
-                )
-
-                // Execute custom action on successful registration
-                onSuccess(authResult)
-            }
-        }
-
-        biometricPrompt.authenticate(getPromptInfo(), BiometricPrompt.CryptoObject(cipher))
-    }
-
     // Authenticate user using biometrics by decrypting stored token
     private fun authenticate(
         context: FragmentActivity,
@@ -176,7 +152,6 @@ class AuthViewModel @Inject constructor(
         val encryptedData = cryptoStorage.readWithDecrypt(key = BuildConfig.BIOMETRIC_KEY)
         encryptedData?.let { data ->
             val cipher = cryptoStorage.initDecryptionCipher(data.initializationVector)
-
             val biometricPrompt = getBiometricPrompt(context) { authResult ->
                 authResult.cryptoObject?.cipher?.let { cipher ->
                     val plainText = cryptoStorage.decrypt(data.ciphertext, cipher)
@@ -261,7 +236,9 @@ class AuthViewModel @Inject constructor(
                         // data. For that you first need to validate the token:
                         // pass googleIdTokenCredential.getIdToken() to the backend server.
 
-                        callOAuthToServer(googleIdTokenCredential.idToken)
+                        // callOAuthToServer(googleIdTokenCredential.idToken)
+
+                        _uiState.update { it.copy(isSignInSuccess = true) }
                     } catch (exception: GoogleIdTokenParsingException) {
                         exception.printStackTrace()
                     }
