@@ -1,7 +1,6 @@
 package org.hinsun.music.presentation.auth
 
 import android.content.Context
-import android.credentials.GetCredentialException
 import androidx.lifecycle.ViewModel
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,7 +9,6 @@ import javax.inject.Inject
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 import android.os.Build
-import android.util.Log
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.biometric.BiometricManager
@@ -25,25 +23,25 @@ import androidx.credentials.PasswordCredential
 import androidx.credentials.PublicKeyCredential
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.auth.api.Auth
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
+import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.ktx.messaging
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.hinsun.core.https.HttpResponse
+import kotlinx.coroutines.tasks.await
 import org.hinsun.core.storage.AppStorage
 import org.hinsun.core.storage.CryptoStorage
-import org.hinsun.domain.models.OAuthRequest
-import org.hinsun.domain.usecases.OAuthUseCase
+import org.hinsun.domain.usecases.VerifyIdTokenUseCase
 import timber.log.Timber
-import java.util.UUID
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val oAuthUseCase: OAuthUseCase,
+    private val verifyIdTokenUseCase: VerifyIdTokenUseCase,
     private val cryptoStorage: CryptoStorage,
     private val appStorage: AppStorage
 ) : ViewModel() {
@@ -74,7 +72,7 @@ class AuthViewModel @Inject constructor(
                 context = context,
             )
 
-            oAuthGoogle(result)
+            oAuthGoogle(result, context)
         } catch (exception: Exception) {
             exception.printStackTrace()
         }
@@ -174,33 +172,43 @@ class AuthViewModel @Inject constructor(
     }
 
     private fun callOAuthToServer(idToken: String) {
+        val authCredential = GoogleAuthProvider.getCredential(idToken, null)
+
         viewModelScope.launch {
-            val response = oAuthUseCase.invoke(
-                OAuthRequest(
-                    idToken = idToken,
-                    deviceToken = idToken
-                )
-            )
+            val deviceToken = Firebase.messaging.token.await()
+            val authResult = Firebase.auth.signInWithCredential(authCredential).await()
+            val idToken = authResult.user?.getIdToken(true)?.await()
 
-            response.collect { httpResponse ->
-                when (httpResponse) {
-                    is HttpResponse.HttpSuccess -> {
-                        Timber.tag(TAG).d("Success: $httpResponse")
-                    }
 
-                    is HttpResponse.HttpFailure -> {
-                        Timber.tag(TAG).d("Failure: $httpResponse")
-                    }
+            Timber.tag(TAG).d("Device token: $deviceToken")
+            Timber.tag(TAG).d("Id token: ${idToken?.token}")
 
-                    is HttpResponse.HttpProcess -> {
-                        Timber.tag(TAG).d("Process: $httpResponse")
-                    }
-                }
-            }
+//            val response = oAuthUseCase.invoke(
+//                OAuthRequest(
+//                    idToken = idToken,
+//                    deviceToken = deviceToken
+//                )
+//            )
+
+//            response.collect { httpResponse ->
+//                when (httpResponse) {
+//                    is HttpResponse.HttpSuccess -> {
+//                        Timber.tag(TAG).d("Success: $httpResponse")
+//                    }
+//
+//                    is HttpResponse.HttpFailure -> {
+//                        Timber.tag(TAG).d("Failure: $httpResponse")
+//                    }
+//
+//                    is HttpResponse.HttpProcess -> {
+//                        Timber.tag(TAG).d("Process: $httpResponse")
+//                    }
+//                }
+//            }
         }
     }
 
-    private fun oAuthGoogle(result: GetCredentialResponse) {
+    private fun oAuthGoogle(result: GetCredentialResponse, context: Context) {
         // Handle the successfully returned credential.
         when (val credential = result.credential) {
             // Passkey credential
@@ -229,16 +237,14 @@ class AuthViewModel @Inject constructor(
                     try {
                         // Use googleIdTokenCredential and extract the ID to validate and
                         // authenticate on your server.
-                        val googleIdTokenCredential = GoogleIdTokenCredential
+                        val idTokenCredential = GoogleIdTokenCredential
                             .createFrom(credential.data)
                         // You can use the members of googleIdTokenCredential directly for UX
                         // purposes, but don't use them to store or control access to user
                         // data. For that you first need to validate the token:
                         // pass googleIdTokenCredential.getIdToken() to the backend server.
 
-                        // callOAuthToServer(googleIdTokenCredential.idToken)
-
-                        _uiState.update { it.copy(isSignInSuccess = true) }
+                        callOAuthToServer(idTokenCredential.idToken)
                     } catch (exception: GoogleIdTokenParsingException) {
                         exception.printStackTrace()
                     }

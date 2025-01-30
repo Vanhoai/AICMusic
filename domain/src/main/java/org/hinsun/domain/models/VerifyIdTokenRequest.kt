@@ -1,6 +1,6 @@
 package org.hinsun.domain.models
 
-data class OAuthRequest(
+data class VerifyIdTokenRequest(
     val idToken: String,
-    val deviceToken: String
+    val uuid: String,
 )

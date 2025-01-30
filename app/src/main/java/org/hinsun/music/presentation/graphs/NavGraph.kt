@@ -33,7 +33,7 @@ import org.hinsun.music.presentation.swipe.setting.music.style.StyleView
 @Composable
 fun NavGraph(navHostController: NavHostController) {
     SharedTransitionLayout {
-        NavHost(navHostController, NavRoute.AUTHENTICATION.path) {
+        NavHost(navHostController, NavRoute.AUTH.path) {
             // Main Flow
             composable(NavRoute.ONBOARD.path) { OnBoardView(navHostController) }
             composable(NavRoute.AUTH.path) { AuthView(navHostController) }
