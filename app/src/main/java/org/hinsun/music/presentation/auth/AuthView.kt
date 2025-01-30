@@ -22,10 +22,7 @@ import org.hinsun.music.presentation.auth.widgets.AuthHeading
 import org.hinsun.music.presentation.auth.widgets.BiometricButton
 import org.hinsun.music.presentation.auth.widgets.SocialButtons
 import org.hinsun.music.presentation.graphs.NavRoute
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
-@OptIn(ExperimentalUuidApi::class)
 @SuppressLint("ContextCastToActivity")
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
 @Composable

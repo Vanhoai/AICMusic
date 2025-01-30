@@ -1,4 +1,4 @@
-package org.hinsun.processor
+package org.hinsun.processors
 
 import org.junit.Test
 

@@ -1,4 +1,4 @@
-package org.hinsun.processor
+package org.hinsun.processors
 
 import com.google.devtools.ksp.processing.Dependencies
 import com.google.devtools.ksp.processing.Resolver
@@ -18,7 +18,6 @@ class AnimatedAnnotationProcessor(
 
         val symbols = resolver.getSymbolsWithAnnotation(AnimatedAnnotation::class.qualifiedName!!)
             .filterIsInstance<KSClassDeclaration>()
-
 
         symbols.forEach {
             val classname = it.simpleName.asString()

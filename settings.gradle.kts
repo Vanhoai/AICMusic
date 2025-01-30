@@ -25,9 +25,8 @@ rootProject.name = "AICMusic"
 include(":app")
 
 // Sub modules
+include(":processors")
 include(":core")
 include(":domain")
-//include(":processor")
-
-
 include(":infrastructure")
+

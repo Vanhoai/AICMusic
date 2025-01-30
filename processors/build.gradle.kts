@@ -1,22 +1,18 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "org.hinsun.processor"
+    namespace = "org.hinsun.processors"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "org.hinsun.processor"
         minSdk = 24
-        //noinspection OldTargetApi
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
