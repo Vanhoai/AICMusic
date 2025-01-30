@@ -1,4 +1,4 @@
-package org.hinsun.domain.models
+package org.hinsun.domain.usecases.verify
 
 data class VerifyIdTokenRequest(
     val idToken: String,

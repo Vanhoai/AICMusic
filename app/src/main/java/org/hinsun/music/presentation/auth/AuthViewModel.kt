@@ -34,14 +34,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import org.hinsun.core.https.HttpResponse
 import org.hinsun.core.storage.AppStorage
 import org.hinsun.core.storage.CryptoStorage
-import org.hinsun.domain.usecases.VerifyIdTokenUseCase
+import org.hinsun.domain.usecases.sign_in.SignInRequest
+import org.hinsun.domain.usecases.sign_in.SignInUseCase
+import org.hinsun.domain.usecases.verify.VerifyIdTokenRequest
+import org.hinsun.domain.usecases.verify.VerifyIdTokenUseCase
 import timber.log.Timber
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
     private val verifyIdTokenUseCase: VerifyIdTokenUseCase,
+    private val signInUseCase: SignInUseCase,
     private val cryptoStorage: CryptoStorage,
     private val appStorage: AppStorage
 ) : ViewModel() {
@@ -171,40 +176,48 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    private fun callOAuthToServer(idToken: String) {
-        val authCredential = GoogleAuthProvider.getCredential(idToken, null)
+    private fun callOAuthToServer(idAuthToken: String) {
+        val authCredential = GoogleAuthProvider.getCredential(idAuthToken, null)
 
         viewModelScope.launch {
-            val deviceToken = Firebase.messaging.token.await()
             val authResult = Firebase.auth.signInWithCredential(authCredential).await()
-            val idToken = authResult.user?.getIdToken(true)?.await()
 
+            val user = authResult.user
+            val deviceToken = Firebase.messaging.token.await()
 
-            Timber.tag(TAG).d("Device token: $deviceToken")
-            Timber.tag(TAG).d("Id token: ${idToken?.token}")
+            val uuid = user!!.uid
+            val idToken = user.getIdToken(true).await().token!!
 
-//            val response = oAuthUseCase.invoke(
-//                OAuthRequest(
-//                    idToken = idToken,
-//                    deviceToken = deviceToken
-//                )
-//            )
+            val verifyIdTokenResponse = verifyIdTokenUseCase.invoke(
+                VerifyIdTokenRequest(
+                    idToken = idToken,
+                    uuid = uuid
+                )
+            )
 
-//            response.collect { httpResponse ->
-//                when (httpResponse) {
-//                    is HttpResponse.HttpSuccess -> {
-//                        Timber.tag(TAG).d("Success: $httpResponse")
-//                    }
-//
-//                    is HttpResponse.HttpFailure -> {
-//                        Timber.tag(TAG).d("Failure: $httpResponse")
-//                    }
-//
-//                    is HttpResponse.HttpProcess -> {
-//                        Timber.tag(TAG).d("Process: $httpResponse")
-//                    }
-//                }
-//            }
+            verifyIdTokenResponse.collect { httpResponse ->
+                when (httpResponse) {
+                    is HttpResponse.HttpSuccess -> {
+                        val signInResponse = signInUseCase.invoke(
+                            req = SignInRequest(
+                                idToken = idToken,
+                                deviceToken = deviceToken,
+                                email = user.email!!
+                            )
+                        )
+
+                        Timber.tag(TAG).d("SignInResponse $signInResponse")
+                    }
+
+                    is HttpResponse.HttpFailure -> {
+                        Timber.tag(TAG).d("Failure: $httpResponse")
+                    }
+
+                    is HttpResponse.HttpProcess -> {
+                        Timber.tag(TAG).d("Process: $httpResponse")
+                    }
+                }
+            }
         }
     }
 
