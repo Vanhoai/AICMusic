@@ -4,7 +4,7 @@ package org.hinsun.core.https
 data class Response<T>(
     val status: Int,
     val message: String,
-    val data: T? = null
+    val payload: T? = null
 ) {
     fun isSuccess(): Boolean {
         return HttpStatusCode.isSuccess(status)

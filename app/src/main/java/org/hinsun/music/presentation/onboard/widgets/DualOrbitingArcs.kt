@@ -60,7 +60,7 @@ fun DualOrbitingArcs(modifier: Modifier = Modifier) {
 
     val brush = Brush.verticalGradient(listOf(Color(0xFFC0FFA3), Color(0xFFFECCFF)))
 
-    var position = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
+    val position = remember { Animatable(Offset.Zero, Offset.VectorConverter) }
     val boxSize = 200
 
     Box(

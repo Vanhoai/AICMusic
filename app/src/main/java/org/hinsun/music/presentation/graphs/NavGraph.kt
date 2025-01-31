@@ -27,6 +27,7 @@ import org.hinsun.music.presentation.swipe.setting.music.audio.AudioView
 import org.hinsun.music.presentation.swipe.setting.music.downloading.DownloadingView
 import org.hinsun.music.presentation.swipe.setting.music.storage.StorageView
 import org.hinsun.music.presentation.swipe.setting.music.style.StyleView
+import timber.log.Timber
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)

@@ -1,13 +1,6 @@
 package org.hinsun.music.presentation.auth
 
 import android.content.Context
-import androidx.lifecycle.ViewModel
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
-import dagger.hilt.android.lifecycle.HiltViewModel
-import org.hinsun.music.BuildConfig
-import javax.inject.Inject
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -22,16 +15,20 @@ import androidx.credentials.GetCredentialResponse
 import androidx.credentials.PasswordCredential
 import androidx.credentials.PublicKeyCredential
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.ktx.messaging
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import org.hinsun.core.https.HttpResponse
@@ -39,18 +36,18 @@ import org.hinsun.core.storage.AppStorage
 import org.hinsun.core.storage.CryptoStorage
 import org.hinsun.domain.usecases.sign_in.SignInRequest
 import org.hinsun.domain.usecases.sign_in.SignInUseCase
-import org.hinsun.domain.usecases.verify.VerifyIdTokenRequest
-import org.hinsun.domain.usecases.verify.VerifyIdTokenUseCase
+import org.hinsun.music.BuildConfig
 import timber.log.Timber
+import javax.inject.Inject
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
-    private val verifyIdTokenUseCase: VerifyIdTokenUseCase,
     private val signInUseCase: SignInUseCase,
     private val cryptoStorage: CryptoStorage,
-    private val appStorage: AppStorage
+    private val appStorage: AppStorage,
 ) : ViewModel() {
-
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
@@ -65,6 +62,7 @@ class AuthViewModel @Inject constructor(
 
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     fun signInWithGoogle(context: Context) = viewModelScope.launch {
+        _uiState.update { it.copy(isLoading = true) }
         try {
             val credentialManager = CredentialManager.create(context)
 
@@ -188,33 +186,35 @@ class AuthViewModel @Inject constructor(
             val uuid = user!!.uid
             val idToken = user.getIdToken(true).await().token!!
 
-            val verifyIdTokenResponse = verifyIdTokenUseCase.invoke(
-                VerifyIdTokenRequest(
+            val response = signInUseCase.invoke(
+                req = SignInRequest(
+                    uuid = uuid,
+                    email = user.email!!,
+                    name = user.displayName!!,
+                    avatar = user.photoUrl?.toString() ?: "",
+                    deviceToken = deviceToken,
                     idToken = idToken,
-                    uuid = uuid
                 )
             )
 
-            verifyIdTokenResponse.collect { httpResponse ->
+            response.collect { httpResponse ->
                 when (httpResponse) {
                     is HttpResponse.HttpSuccess -> {
-                        val signInResponse = signInUseCase.invoke(
-                            req = SignInRequest(
-                                idToken = idToken,
-                                deviceToken = deviceToken,
-                                email = user.email!!
-                            )
+                        val dataResponse = httpResponse.data
+                        appStorage.writeAuthSession(
+                            accessToken = dataResponse.payload!!.accessToken,
+                            refreshToken = dataResponse.payload!!.refreshToken
                         )
 
-                        Timber.tag(TAG).d("SignInResponse $signInResponse")
+                        _uiState.update { it.copy(isLoading = false, isSignInSuccess = true) }
                     }
 
                     is HttpResponse.HttpFailure -> {
-                        Timber.tag(TAG).d("Failure: $httpResponse")
+                        _uiState.update { it.copy(isLoading = false) }
                     }
 
                     is HttpResponse.HttpProcess -> {
-                        Timber.tag(TAG).d("Process: $httpResponse")
+                        _uiState.update { it.copy(isLoading = true) }
                     }
                 }
             }

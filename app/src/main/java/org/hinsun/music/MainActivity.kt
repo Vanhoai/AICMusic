@@ -4,10 +4,14 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import org.hinsun.music.design.theme.AICMusicTheme
+import org.hinsun.music.design.widgets.providers.SharedLoadingProvider
 import org.hinsun.music.presentation.graphs.NavGraph
 
 @AndroidEntryPoint
@@ -19,7 +23,12 @@ class MainActivity : FragmentActivity() {
         setContent {
             AICMusicTheme {
                 val navHostController = rememberNavController()
-                NavGraph(navHostController)
+
+                SharedLoadingProvider {
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        NavGraph(navHostController)
+                    }
+                }
             }
         }
     }

@@ -17,6 +17,10 @@ class AppStorage @Inject constructor(
         return hinsunStorage.read(ACCESS_TOKEN, defaultValue = "")
     }
 
+    fun readRefreshToken(): String {
+        return hinsunStorage.read(REFRESH_TOKEN, defaultValue = "")
+    }
+
     fun readIsEnableBiometric(): Boolean {
         return hinsunStorage.read(
             IS_ENABLE_BIOMETRIC,
