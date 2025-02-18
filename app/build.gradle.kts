@@ -1,3 +1,4 @@
+import java.util.Locale
 import java.util.Properties
 
 plugins {
@@ -16,6 +17,21 @@ if (keyStoreFile.exists()) keyStoreProperties.load(keyStoreFile.inputStream())
 val localFile = rootProject.file("local.properties")
 val localProperties = Properties()
 if (localFile.exists()) localProperties.load(localFile.inputStream())
+
+fun formatKeyBuildConfig(key: String): String {
+    val arr = mutableListOf<String>()
+
+    var str = ""
+    for (it in key.toCharArray()) {
+        if (it.isUpperCase()) {
+            arr.add(str)
+            str = it.toString()
+        } else str += it
+    }
+
+    arr.add(str)
+    return arr.joinToString("_").uppercase(Locale.ROOT)
+}
 
 android {
     namespace = "org.hinsun.music"
@@ -49,33 +65,29 @@ android {
                 "proguard-rules.pro"
             )
 
-            buildConfigField(
-                "String",
-                "WEB_CLIENT_ID",
-                "\"${localProperties.getProperty("webClientId")}\""
-            )
+            localProperties.propertyNames().asIterator().forEach { propName ->
+                if (propName.toString() == "sdk.dir") return@forEach
 
-            buildConfigField(
-                "String",
-                "BIOMETRIC_KEY",
-                "\"${localProperties.getProperty("biometricKey")}\""
-            )
+                buildConfigField(
+                    "String",
+                    formatKeyBuildConfig(propName.toString()),
+                    "\"${localProperties.getProperty(propName.toString())}\""
+                )
+            }
 
             signingConfig = signingConfigs.getByName("release")
         }
 
         debug {
-            buildConfigField(
-                "String",
-                "WEB_CLIENT_ID",
-                "\"${localProperties.getProperty("webClientId")}\""
-            )
+            localProperties.propertyNames().asIterator().forEach { propName ->
+                if (propName.toString() == "sdk.dir") return@forEach
 
-            buildConfigField(
-                "String",
-                "BIOMETRIC_KEY",
-                "\"${localProperties.getProperty("biometricKey")}\""
-            )
+                buildConfigField(
+                    "String",
+                    formatKeyBuildConfig(propName.toString()),
+                    "\"${localProperties.getProperty(propName.toString())}\""
+                )
+            }
         }
     }
 
@@ -114,6 +126,7 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.datastore)
 
     implementation(kotlin("reflect"))
 

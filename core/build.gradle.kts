@@ -67,6 +67,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity.compose)
+    implementation(platform(libs.androidx.compose.bom))
 
     // hilt
     implementation(libs.hilt.android)
@@ -74,4 +77,5 @@ dependencies {
 
     // Gson
     implementation(libs.gson)
+    implementation(libs.datastore)
 }

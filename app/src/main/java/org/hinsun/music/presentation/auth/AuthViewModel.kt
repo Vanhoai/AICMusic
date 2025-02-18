@@ -51,6 +51,12 @@ class AuthViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
+    init {
+        val isEnableBiometric = appStorage.readIsEnableBiometric()
+        val isEnableCryptoStorage = appStorage.readIsEnableCryptoStorage()
+        _uiState.update { it.copy(isShowBiometric = isEnableBiometric && isEnableCryptoStorage) }
+    }
+
     @OptIn(ExperimentalUuidApi::class)
     val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
         .setFilterByAuthorizedAccounts(true)
@@ -91,13 +97,7 @@ class AuthViewModel @Inject constructor(
                 .show()
             return
         }
-
-//        val isEnableBiometric = appStorage.readIsEnableBiometric()
-//        if (!isEnableBiometric) {
-//            Toast.makeText(context, "Biometric is not enabled", Toast.LENGTH_SHORT).show()
-//            return
-//        }
-
+        
         authenticate(context, onSuccess)
     }
 

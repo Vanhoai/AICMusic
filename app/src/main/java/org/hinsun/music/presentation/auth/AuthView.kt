@@ -52,6 +52,14 @@ fun AuthView(
         }
     }
 
+    fun signIn() {
+        // viewModel.signInWithGoogle(context)
+        scope.launch {
+            delay(1000)
+            navHostController.navigate(NavRoute.SWIPE.path)
+        }
+    }
+
     BaseScaffold { innerPadding ->
         Column(
             modifier = Modifier
@@ -60,7 +68,7 @@ fun AuthView(
         ) {
             AuthHeading()
             SocialButtons(
-                onGoogleSignIn = { viewModel.signInWithGoogle(context) },
+                onGoogleSignIn = { signIn() },
                 onAppleSignIn = {
                     scope.launch {
                         loadingStateHolder.setGlobalLoading(true)
@@ -70,14 +78,16 @@ fun AuthView(
                 }
             )
 
-            BiometricButton(onPress = {
-                viewModel.signInWithBiometric(
-                    context = context,
-                    onSuccess = { message ->
-                        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                    }
-                )
-            })
+            if (uiState.value.isShowBiometric) {
+                BiometricButton(onPress = {
+                    viewModel.signInWithBiometric(
+                        context = context,
+                        onSuccess = { message ->
+                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                })
+            }
 
             Box(
                 modifier = Modifier.weight(1f)

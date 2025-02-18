@@ -1,5 +1,6 @@
 package org.hinsun.core.storage
 
+import android.app.Application
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import org.hinsun.core.BuildConfig
@@ -15,14 +16,20 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 
 class CryptoStorageImpl @Inject constructor(
+    private val appStorage: AppStorage,
     private val hinsunStorage: HinsunStorage
 ) : CryptoStorage {
     private val keyStore: KeyStore = KeyStore.getInstance(ANDROID_KEYSTORE)
 
     init {
-        keyStore.load(null)
-        // If key alias doesn't exist, create a new secret key
-        if (!keyStore.containsAlias(KEY_ALIAS)) createSecretKey()
+        try {
+            keyStore.load(null)
+            // If key alias doesn't exist, create a new secret key
+            if (!keyStore.containsAlias(KEY_ALIAS)) createSecretKey()
+        } catch (exception: Exception) {
+            exception.printStackTrace()
+            appStorage
+        }
     }
 
     private val publicKey: PublicKey
@@ -34,19 +41,24 @@ class CryptoStorageImpl @Inject constructor(
     private val secretKey: SecretKey
         get() = keyStore.getKey(KEY_ALIAS, null) as SecretKey
 
+    @Throws(Exception::class)
     private fun createSecretKey() {
-        val keyGenParams = KeyGenParameterSpec.Builder(
-            KEY_ALIAS,
-            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
-        ).apply {
-            setBlockModes(BLOCK_MODE)
-            setEncryptionPaddings(PADDING)
-            setUserAuthenticationRequired(true)
-        }.build()
+        try {
+            val keyGenParams = KeyGenParameterSpec.Builder(
+                KEY_ALIAS,
+                KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+            ).apply {
+                setBlockModes(BLOCK_MODE)
+                setEncryptionPaddings(PADDING)
+                setUserAuthenticationRequired(true)
+            }.build()
 
-        val keyGenerator = KeyGenerator.getInstance(ALGORITHMS, ANDROID_KEYSTORE)
-        keyGenerator.init(keyGenParams)
-        keyGenerator.generateKey()
+            val keyGenerator = KeyGenerator.getInstance(ALGORITHMS, ANDROID_KEYSTORE)
+            keyGenerator.init(keyGenParams)
+            keyGenerator.generateKey()
+        } catch (exception: Exception) {
+            throw exception
+        }
     }
 
     override fun initEncryptionCipher(): Cipher {

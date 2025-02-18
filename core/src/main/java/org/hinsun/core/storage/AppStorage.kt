@@ -28,11 +28,19 @@ class AppStorage @Inject constructor(
         )
     }
 
+    fun readIsEnableCryptoStorage(): Boolean {
+        return hinsunStorage.read(
+            IS_ENABLE_CRYPTO_STORAGE,
+            defaultValue = false
+        )
+    }
+
     companion object {
         private const val PREFIX = "@org.hinsun.storage"
 
         const val ACCESS_TOKEN = "$PREFIX.accessToken"
         const val REFRESH_TOKEN = "$PREFIX.refreshToken"
         const val IS_ENABLE_BIOMETRIC = "$PREFIX.isEnableBiometric"
+        const val IS_ENABLE_CRYPTO_STORAGE = "$PREFIX.isEnableCryptoStorage"
     }
 }

@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import org.hinsun.music.presentation.auth.AuthView
+import org.hinsun.music.presentation.introduction.IntroductionView
 import org.hinsun.music.presentation.music.player.PlayerView
 import org.hinsun.music.presentation.music.playlist.PlaylistView
 import org.hinsun.music.presentation.not_found.NotFoundView
@@ -34,8 +35,9 @@ import timber.log.Timber
 @Composable
 fun NavGraph(navHostController: NavHostController) {
     SharedTransitionLayout {
-        NavHost(navHostController, NavRoute.AUTH.path) {
+        NavHost(navHostController, NavRoute.ONBOARD.path) {
             // Main Flow
+            composable(NavRoute.INTRODUCTION.path) { IntroductionView(navHostController) }
             composable(NavRoute.ONBOARD.path) { OnBoardView(navHostController) }
             composable(NavRoute.AUTH.path) { AuthView(navHostController) }
             composable(NavRoute.SWIPE.path) {
