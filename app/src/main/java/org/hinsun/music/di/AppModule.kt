@@ -1,8 +1,30 @@
 package org.hinsun.music.di
 
+import android.content.Context
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.database.DatabaseProvider
+import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
+import androidx.media3.datasource.cache.NoOpCacheEvictor
+import androidx.media3.datasource.cache.SimpleCache
 import dagger.Module
+import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import org.hinsun.music.constants.MaxSongCacheSizeKey
+import org.hinsun.music.extensions.dataStore
+import org.hinsun.music.extensions.get
+import javax.inject.Qualifier
+import javax.inject.Singleton
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class PlayerCache
+
+@Qualifier
+@Retention(AnnotationRetention.BINARY)
+annotation class DownloadCache
 
 @Module(
     includes = [
@@ -12,5 +34,41 @@ import dagger.hilt.components.SingletonComponent
         UseCaseModule::class,
     ]
 )
+@OptIn(UnstableApi::class)
 @InstallIn(SingletonComponent::class)
-class AppModule {}
+class AppModule {
+    @Singleton
+    @Provides
+    @PlayerCache
+    fun providePlayerCache(
+        @ApplicationContext context: Context,
+        databaseProvider: DatabaseProvider
+    ): SimpleCache {
+        val constructor = {
+            SimpleCache(
+                context.filesDir.resolve("exoplayer"),
+                when (val cacheSize = context.dataStore[MaxSongCacheSizeKey] ?: 1024) {
+                    -1 -> NoOpCacheEvictor()
+                    else -> LeastRecentlyUsedCacheEvictor(cacheSize * 1024 * 1024L)
+                },
+                databaseProvider
+            )
+        }
+        constructor().release()
+        return constructor()
+    }
+
+    @Singleton
+    @Provides
+    @DownloadCache
+    fun provideDownloadCache(
+        @ApplicationContext context: Context,
+        databaseProvider: DatabaseProvider
+    ): SimpleCache {
+        val constructor = {
+            SimpleCache(context.filesDir.resolve("download"), NoOpCacheEvictor(), databaseProvider)
+        }
+        constructor().release()
+        return constructor()
+    }
+}
