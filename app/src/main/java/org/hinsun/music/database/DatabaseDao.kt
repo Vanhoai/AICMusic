@@ -1,4 +1,6 @@
 package org.hinsun.music.database
 
-class DatabaseDao {
-}
+import androidx.room.Dao
+
+@Dao
+interface DatabaseDao {}

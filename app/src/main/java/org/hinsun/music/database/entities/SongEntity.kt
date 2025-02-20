@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
     indices = []
 )
 data class SongEntity(
-    @PrimaryKey(autoGenerate = true) val id: String,
+    @PrimaryKey(autoGenerate = true) val id: Int,
     val name: String,
     val thumbnail: String? = null,
     val duration: Int = -1, // in seconds

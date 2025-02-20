@@ -14,6 +14,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import org.hinsun.music.constants.MaxSongCacheSizeKey
+import org.hinsun.music.database.InternalDatabase
+import org.hinsun.music.database.MusicDatabase
 import org.hinsun.music.extensions.dataStore
 import org.hinsun.music.extensions.get
 import javax.inject.Qualifier
@@ -38,6 +40,11 @@ annotation class DownloadCache
 @OptIn(UnstableApi::class)
 @InstallIn(SingletonComponent::class)
 class AppModule {
+
+    @Singleton
+    @Provides
+    fun provideDatabase(@ApplicationContext context: Context): MusicDatabase =
+        InternalDatabase.newInstance(context)
 
     @Singleton
     @Provides

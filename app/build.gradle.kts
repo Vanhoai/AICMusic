@@ -134,10 +134,13 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.datastore)
 
-    implementation(kotlin("reflect"))
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.json)
+    implementation(libs.ktor.client.encoding)
 
-    // implementation(project(":processor"))
-    // ksp(project(mapOf("path" to ":processor", "configuration" to "releaseRuntimeElements")))
+    implementation(kotlin("reflect"))
 
     // Ksp
     implementation(libs.ksp.processing)
@@ -183,12 +186,6 @@ dependencies {
 
     // Biometric
     implementation(libs.biometric)
-
-    // Retrofit
-    implementation(libs.retrofit)
-    implementation(libs.converter.gson)
-    implementation(libs.okhttp)
-    implementation(libs.logging.interceptor)
 
     implementation(project(":core"))
     implementation(project(":domain"))
