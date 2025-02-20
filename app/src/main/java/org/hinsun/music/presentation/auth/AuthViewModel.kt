@@ -38,9 +38,8 @@ import org.hinsun.domain.usecases.sign_in.SignInRequest
 import org.hinsun.domain.usecases.sign_in.SignInUseCase
 import org.hinsun.music.BuildConfig
 import timber.log.Timber
+import java.util.UUID
 import javax.inject.Inject
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
@@ -57,13 +56,12 @@ class AuthViewModel @Inject constructor(
         _uiState.update { it.copy(isShowBiometric = isEnableBiometric && isEnableCryptoStorage) }
     }
 
-    @OptIn(ExperimentalUuidApi::class)
     val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
         .setFilterByAuthorizedAccounts(true)
         .setServerClientId(BuildConfig.WEB_CLIENT_ID)
         .setFilterByAuthorizedAccounts(false)
         .setAutoSelectEnabled(false)
-        .setNonce(Uuid.random().toString())
+        .setNonce(UUID.randomUUID().toString())
         .build()
 
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
@@ -97,7 +95,7 @@ class AuthViewModel @Inject constructor(
                 .show()
             return
         }
-        
+
         authenticate(context, onSuccess)
     }
 

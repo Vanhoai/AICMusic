@@ -63,6 +63,7 @@ import kotlinx.coroutines.withContext
 import org.hinsun.music.R
 import org.hinsun.music.design.theme.AppTheme
 import org.hinsun.music.design.widgets.base.BaseImage
+import org.hinsun.music.presentation.music.mini.MiniPlayer
 import kotlin.math.asin
 
 data class BottomNavItem(
@@ -86,7 +87,6 @@ fun SharedTransitionScope.CurvedBottomNavigation(
     modifier: Modifier = Modifier
 ) {
 
-    val context = LocalContext.current
     val c = LocalConfiguration.current.screenWidthDp.toFloat()
     val d = 12f
     val r = (d / 2f) + (c * c) / (8f * d)
@@ -127,75 +127,14 @@ fun SharedTransitionScope.CurvedBottomNavigation(
             .height(172.dp)
             .background(Color(0xFF3E3E3E))
     ) {
-
-        Box(
+        MiniPlayer(
+            navHostController = navHostController,
+            interactionSource = interactionSource,
+            animatedVisibilityScope = animatedVisibilityScope,
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .padding(12.dp)
-                .clickable(
-                    interactionSource = interactionSource,
-                    indication = null,
-                ) {
-                    navHostController.navigate(NavRoute.PLAYER.path)
-                }
-                .sharedElement(
-                    state = rememberSharedContentState(key = idBackgroundTransition),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                )
-        ) {
-            Row(modifier = Modifier.fillMaxSize(), verticalAlignment = Alignment.CenterVertically) {
-                BaseImage(
-                    width = 48,
-                    height = 48,
-                    shape = RoundedCornerShape(4.dp),
-                    modifier = Modifier
-                        .sharedElement(
-                            state = rememberSharedContentState(key = idImageTransition),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                        )
-                )
-
-                Spacer(modifier = Modifier.width(12.dp))
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "Hẹn em mai sau gặp lại (feat. Lamoon)",
-                        style = AppTheme.typography.normal,
-                        fontSize = 16.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        color = AppTheme.colors.textPrimary,
-                        modifier = Modifier
-                            .sharedElement(
-                                state = rememberSharedContentState(key = idNameTransition),
-                                animatedVisibilityScope = animatedVisibilityScope,
-                            )
-                    )
-
-                    Text(
-                        text = "5:43s",
-                        style = AppTheme.typography.italic,
-                        fontSize = 14.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        color = AppTheme.colors.textPrimary,
-                        modifier = Modifier.sharedElement(
-                            state = rememberSharedContentState(key = "DurationTransition"),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                        )
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(12.dp))
-
-                Image(
-                    painter = painterResource(id = R.drawable.ic_play),
-                    contentDescription = null,
-                    modifier = Modifier.size(24.dp),
-                    colorFilter = ColorFilter.tint(Color.White, blendMode = BlendMode.SrcIn)
-                )
-            }
-        }
+        )
 
         Box(
             modifier = modifier

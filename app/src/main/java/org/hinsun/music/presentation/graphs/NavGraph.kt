@@ -35,7 +35,7 @@ import timber.log.Timber
 @Composable
 fun NavGraph(navHostController: NavHostController) {
     SharedTransitionLayout {
-        NavHost(navHostController, NavRoute.ONBOARD.path) {
+        NavHost(navHostController, NavRoute.SWIPE.path) {
             // Main Flow
             composable(NavRoute.INTRODUCTION.path) { IntroductionView(navHostController) }
             composable(NavRoute.ONBOARD.path) { OnBoardView(navHostController) }

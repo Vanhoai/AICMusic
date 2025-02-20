@@ -51,6 +51,8 @@ import org.hinsun.music.R
 import org.hinsun.music.design.theme.AppTheme
 import org.hinsun.music.design.widgets.base.BaseImage
 import org.hinsun.music.design.widgets.base.BaseScaffold
+import org.hinsun.music.playback.EmptyMusicQueue
+import org.hinsun.music.playback.LocalPlayerConnection
 import org.hinsun.music.presentation.graphs.idBackgroundTransition
 import org.hinsun.music.presentation.graphs.idImageTransition
 import org.hinsun.music.presentation.graphs.idNameTransition
@@ -63,7 +65,7 @@ fun SharedTransitionScope.PlayerView(
     navHostController: NavHostController,
     animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
-    val context = LocalContext.current
+    val playerConnection = LocalPlayerConnection.current ?: return
     val infiniteTransition = rememberInfiniteTransition()
     val angle = infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -212,6 +214,9 @@ fun SharedTransitionScope.PlayerView(
                             .size(60.dp)
                             .clip(CircleShape)
                             .background(Color.White)
+                            .clickable {
+                                playerConnection.playQueue(EmptyMusicQueue)
+                            }
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_play),
