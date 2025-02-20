@@ -17,9 +17,20 @@ class AppStorage @Inject constructor(
         return hinsunStorage.read(ACCESS_TOKEN, defaultValue = "")
     }
 
+    fun readRefreshToken(): String {
+        return hinsunStorage.read(REFRESH_TOKEN, defaultValue = "")
+    }
+
     fun readIsEnableBiometric(): Boolean {
         return hinsunStorage.read(
             IS_ENABLE_BIOMETRIC,
+            defaultValue = false
+        )
+    }
+
+    fun readIsEnableCryptoStorage(): Boolean {
+        return hinsunStorage.read(
+            IS_ENABLE_CRYPTO_STORAGE,
             defaultValue = false
         )
     }
@@ -30,5 +41,6 @@ class AppStorage @Inject constructor(
         const val ACCESS_TOKEN = "$PREFIX.accessToken"
         const val REFRESH_TOKEN = "$PREFIX.refreshToken"
         const val IS_ENABLE_BIOMETRIC = "$PREFIX.isEnableBiometric"
+        const val IS_ENABLE_CRYPTO_STORAGE = "$PREFIX.isEnableCryptoStorage"
     }
 }

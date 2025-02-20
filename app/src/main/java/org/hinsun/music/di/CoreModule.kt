@@ -30,7 +30,10 @@ class CoreModule {
 
     @Provides
     @Singleton
-    fun provideCryptoStorage(hinsunStorage: HinsunStorage): CryptoStorage {
-        return CryptoStorageImpl(hinsunStorage)
+    fun provideCryptoStorage(
+        appStorage: AppStorage,
+        hinsunStorage: HinsunStorage
+    ): CryptoStorage {
+        return CryptoStorageImpl(appStorage, hinsunStorage)
     }
 }
