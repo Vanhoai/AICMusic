@@ -5,6 +5,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.request.headers
 import okhttp3.OkHttpClient
@@ -20,6 +21,12 @@ class NetworkModule {
     @Singleton
     fun provideHttpClient(): HttpClient {
         return HttpClient {
+            install(HttpTimeout) {
+                requestTimeoutMillis = 60_000
+                connectTimeoutMillis = 60_000
+                socketTimeoutMillis = 60_000
+            }
+
             defaultRequest {
                 headers {}
                 url(BuildConfig.BASE_URL)

@@ -1,6 +1,7 @@
 package org.hinsun.music.database.entities
 
 import androidx.compose.runtime.Immutable
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -11,8 +12,25 @@ import androidx.room.PrimaryKey
 )
 data class SongEntity(
     @PrimaryKey(autoGenerate = true) val id: Int,
-    val name: String,
-    val thumbnail: String? = null,
-    val duration: Int = -1, // in seconds
-    val totalPlayTime: Long = 0, // in milliseconds
-)
+    val title: String,
+    @ColumnInfo(name = "audio_uri") val audioUri: String,
+    @ColumnInfo(name = "thumbnail_uri") val thumbnailUri: String,
+    val duration: Int,
+) {
+    companion object {
+        fun newSong(
+            title: String,
+            audioUri: String,
+            thumbnailUri: String,
+            duration: Int
+        ): SongEntity {
+            return SongEntity(
+                id = 0,
+                title = title,
+                audioUri = audioUri,
+                thumbnailUri = thumbnailUri,
+                duration = duration,
+            )
+        }
+    }
+}

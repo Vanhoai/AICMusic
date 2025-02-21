@@ -39,6 +39,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -62,6 +63,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
 import org.hinsun.music.R
@@ -74,13 +77,43 @@ import org.hinsun.music.design.widgets.shared.SharedRowText
 import org.hinsun.music.presentation.swipe.save.widgets.DownloadAction
 import org.hinsun.music.presentation.swipe.save.widgets.DownloadModalBottomSheet
 import org.hinsun.music.presentation.swipe.save.widgets.PasteLink
+import org.hinsun.music.services.DownloadState
+import timber.log.Timber
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
-fun SaveView(navHostController: NavHostController) {
+fun SaveView(
+    navHostController: NavHostController,
+    saveViewModel: SaveViewModel = hiltViewModel<SaveViewModel>()
+) {
     val scrollState = rememberScrollState()
     val keyboardController = LocalSoftwareKeyboardController.current
     var showBottomSheet by remember { mutableStateOf(false) }
+
+    var url by remember { mutableStateOf("") }
+    var jobId by remember { mutableStateOf("") }
+
+    val downloadMap by saveViewModel.downloadState.collectAsState()
+    val progressState by saveViewModel.progress.collectAsState()
+    var progress by remember { mutableFloatStateOf(0f) }
+
+    Timber.tag("SaveView").d("download job: ${downloadMap[jobId]}")
+
+    LaunchedEffect(downloadMap) {
+        if (downloadMap[jobId] != null) {
+            val downloadState = downloadMap[jobId]
+            if (downloadState != null && downloadState is DownloadState.Downloading) {
+                progress = downloadState.progress
+            }
+
+            Timber.tag("SaveView").d("progress: $progress")
+        }
+    }
+
+    LaunchedEffect(progressState) {
+        progress = progressState
+        Timber.tag("SaveView").d("progress: $progress")
+    }
 
     LazyColumn(
         modifier = Modifier
@@ -106,7 +139,10 @@ fun SaveView(navHostController: NavHostController) {
         }
 
         item {
-            PasteLink(onDownload = { showBottomSheet = true })
+            PasteLink(onDownload = {
+                showBottomSheet = true
+                url = it
+            })
             Spacer(modifier = Modifier.height(12.dp))
         }
 
@@ -137,12 +173,15 @@ fun SaveView(navHostController: NavHostController) {
     }
 
     DownloadModalBottomSheet(
+        progress = progress,
         showBottomSheet = showBottomSheet,
         onCloseBottomSheet = {
             showBottomSheet = false
+        },
+        onStart = {
+            val job = saveViewModel.startDownload(url)
+            if (job != null) jobId = job
         }
     )
 }
-
-
 

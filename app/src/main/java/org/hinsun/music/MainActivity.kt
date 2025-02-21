@@ -25,6 +25,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.hinsun.music.database.LocalDatabase
+import org.hinsun.music.database.MusicDatabase
 import org.hinsun.music.design.theme.AICMusicTheme
 import org.hinsun.music.design.widgets.providers.SharedLoadingProvider
 import org.hinsun.music.playback.LocalPlayerConnection
@@ -33,10 +35,14 @@ import org.hinsun.music.playback.PlayerConnection
 import org.hinsun.music.playback.Track
 import org.hinsun.music.presentation.graphs.NavGraph
 import timber.log.Timber
+import javax.inject.Inject
 
 @OptIn(UnstableApi::class)
 @AndroidEntryPoint
 class MainActivity : FragmentActivity() {
+
+    @Inject
+    lateinit var database: MusicDatabase
 
     private val isPlaying = MutableStateFlow(false)
     private val maxDuration = MutableStateFlow(0f)
@@ -117,7 +123,8 @@ class MainActivity : FragmentActivity() {
         setContent {
             AICMusicTheme {
                 CompositionLocalProvider(
-                    LocalPlayerConnection provides playerConnection
+                    LocalPlayerConnection provides playerConnection,
+                    LocalDatabase provides database
                 ) {
                     val navHostController = rememberNavController()
                     SharedLoadingProvider {

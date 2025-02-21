@@ -33,6 +33,8 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DownloadModalBottomSheet(
+    progress: Float = 0f,
+    onStart: () -> Unit,
     showBottomSheet: Boolean = false,
     onCloseBottomSheet: () -> Unit = {},
 ) {
@@ -42,7 +44,6 @@ fun DownloadModalBottomSheet(
         skipPartiallyExpanded = true
     )
     val scope = rememberCoroutineScope()
-    var progress by remember { mutableFloatStateOf(0f) }
 
     fun closeBottomSheet() {
         scope.launch(Dispatchers.Main) {
@@ -52,21 +53,22 @@ fun DownloadModalBottomSheet(
     }
 
     fun startDownload() {
-        scope.launch {
-            animate(
-                initialValue = 0f,
-                targetValue = 100f,
-                animationSpec = tween(
-                    durationMillis = 5000,
-                    easing = LinearEasing
-                )
-            ) { value, _ ->
-                progress = value
-                if (value >= 100f) {
-                    Toast.makeText(context, "Download Complete", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
+        onStart()
+//        scope.launch {
+//            animate(
+//                initialValue = 0f,
+//                targetValue = 100f,
+//                animationSpec = tween(
+//                    durationMillis = 5000,
+//                    easing = LinearEasing
+//                )
+//            ) { value, _ ->
+//                progress = value
+//                if (value >= 100f) {
+//                    Toast.makeText(context, "Download Complete", Toast.LENGTH_SHORT).show()
+//                }
+//            }
+//        }
     }
 
     if (showBottomSheet) {

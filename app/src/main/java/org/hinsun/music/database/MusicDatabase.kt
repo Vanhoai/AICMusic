@@ -3,6 +3,7 @@ package org.hinsun.music.database
 import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -76,3 +77,5 @@ abstract class InternalDatabase : RoomDatabase() {
             )
     }
 }
+
+val LocalDatabase = staticCompositionLocalOf<MusicDatabase> { error("No database provided") }

@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.sp
 import org.hinsun.music.R
 import org.hinsun.music.design.theme.AppTheme
 
-
 @SuppressLint("UseOfNonLambdaOffsetOverload")
 @Composable
 fun PasteLink(onDownload: (url: String) -> Unit) {
@@ -43,7 +42,7 @@ fun PasteLink(onDownload: (url: String) -> Unit) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
     val url =
-        remember { mutableStateOf("https://i.pinimg.com/474x/66/89/4c/66894c9f710c09d073a764ffe73d7197.jpghttps://i.pinimg.com/474x/66/89/4c/66894c9f710c09d073a764ffe73d7197.jpg") }
+        remember { mutableStateOf("http://10.0.1.66:8080/static/audios/youtube_lXx-kdlxL48_audio.mp3") }
 
     Row(
         modifier = Modifier

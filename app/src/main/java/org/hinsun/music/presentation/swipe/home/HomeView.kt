@@ -21,6 +21,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,16 +31,22 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import org.hinsun.music.R
+import org.hinsun.music.database.LocalDatabase
 import org.hinsun.music.design.theme.AppTheme
 import org.hinsun.music.design.widgets.shared.SharedCardSong
 import org.hinsun.music.design.widgets.shared.SharedGradientOutlineImage
 import org.hinsun.music.design.widgets.shared.SharedPlaylistCard
 import org.hinsun.music.design.widgets.shared.SharedRowText
 import org.hinsun.music.presentation.graphs.NavRoute
+import timber.log.Timber
 
 @Composable
 fun HomeView(navHostController: NavHostController) {
     val scrollState = rememberScrollState()
+    val database = LocalDatabase.current
+
+    val songs = database.getAllSongs().collectAsState(initial = emptyList())
+    Timber.tag("HomeView").d("Songs: $songs")
 
     LazyColumn(
         modifier = Modifier
