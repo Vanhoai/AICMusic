@@ -16,6 +16,7 @@ data class SongEntity(
     @ColumnInfo(name = "audio_uri") val audioUri: String,
     @ColumnInfo(name = "thumbnail_uri") val thumbnailUri: String,
     val duration: Int,
+    @ColumnInfo(name = "date_downloaded") val dateDownloaded: Long,
 ) {
     companion object {
         fun newSong(
@@ -30,6 +31,7 @@ data class SongEntity(
                 audioUri = audioUri,
                 thumbnailUri = thumbnailUri,
                 duration = duration,
+                dateDownloaded = 0,
             )
         }
     }

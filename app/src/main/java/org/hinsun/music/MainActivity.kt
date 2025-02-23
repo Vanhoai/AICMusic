@@ -22,9 +22,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.hinsun.music.database.LocalDatabase
 import org.hinsun.music.database.MusicDatabase
 import org.hinsun.music.design.theme.AICMusicTheme
@@ -32,7 +29,6 @@ import org.hinsun.music.design.widgets.providers.SharedLoadingProvider
 import org.hinsun.music.playback.LocalPlayerConnection
 import org.hinsun.music.playback.MusicService
 import org.hinsun.music.playback.PlayerConnection
-import org.hinsun.music.playback.Track
 import org.hinsun.music.presentation.graphs.NavGraph
 import timber.log.Timber
 import javax.inject.Inject
@@ -44,43 +40,13 @@ class MainActivity : FragmentActivity() {
     @Inject
     lateinit var database: MusicDatabase
 
-    private val isPlaying = MutableStateFlow(false)
-    private val maxDuration = MutableStateFlow(0f)
-    private val currentDuration = MutableStateFlow(0f)
-    private val currentTrack = MutableStateFlow<Track?>(null)
-
     private var service: MusicService? = null
-
     private var playerConnection by mutableStateOf<PlayerConnection?>(null)
 
     private val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName?, binder: IBinder?) {
             service = (binder as MusicService.MusicBinder).getService()
             playerConnection = PlayerConnection(this@MainActivity, binder, lifecycleScope)
-
-            lifecycleScope.launch {
-                binder.isPlaying().collectLatest {
-                    isPlaying.value = it
-                }
-            }
-
-            lifecycleScope.launch {
-                binder.maxDuration().collectLatest {
-                    maxDuration.value = it
-                }
-            }
-
-            lifecycleScope.launch {
-                binder.currentDuration().collectLatest {
-                    currentDuration.value = it
-                }
-            }
-
-            lifecycleScope.launch {
-                binder.currentTrack().collectLatest {
-                    currentTrack.value = it
-                }
-            }
         }
 
         override fun onServiceDisconnected(name: ComponentName?) {
@@ -101,14 +67,11 @@ class MainActivity : FragmentActivity() {
 
     override fun onStop() {
         unbindService(serviceConnection)
-        Timber.tag("AudioService").d("Stop Service")
         super.onStop()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Timber.tag("AudioService").d("On Destroy")
-
         if (isFinishing) {
             stopService(Intent(this, MusicService::class.java))
             unbindService(serviceConnection)

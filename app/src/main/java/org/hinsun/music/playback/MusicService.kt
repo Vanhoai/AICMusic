@@ -14,6 +14,7 @@ import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.compose.runtime.MutableState
 import androidx.core.app.NotificationCompat
@@ -41,6 +42,7 @@ import androidx.media3.exoplayer.analytics.PlaybackStatsListener
 import androidx.media3.exoplayer.audio.DefaultAudioSink
 import androidx.media3.exoplayer.audio.SilenceSkippingAudioProcessor
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.extractor.DefaultExtractorsFactory
 import androidx.media3.extractor.ExtractorsFactory
 import androidx.media3.extractor.mkv.MatroskaExtractor
@@ -59,6 +61,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.hinsun.music.CHANNEL_ID
 import org.hinsun.music.MainActivity
 import org.hinsun.music.R
@@ -86,8 +89,8 @@ class MusicService : MediaLibraryService(),
 
     private var currentQueue: Queue = EmptyMusicQueue
 
-    private val currentTrack = MutableStateFlow<Track?>(null)
-    private var playlist = mutableListOf<Track>()
+    private val currentTrack = MutableStateFlow<MediaItem?>(null)
+    private var playlist = mutableListOf<MediaItem>()
     private val maxDuration = MutableStateFlow(0f)
     private val currentDuration = MutableStateFlow(0f)
     val isPlaying = MutableStateFlow(false)
@@ -102,45 +105,11 @@ class MusicService : MediaLibraryService(),
 
     inner class MusicBinder : Binder() {
         fun getService(): MusicService = this@MusicService
-
-        fun currentDuration() = this@MusicService.currentDuration
-
-        fun maxDuration() = this@MusicService.maxDuration
-
-        fun isPlaying() = this@MusicService.isPlaying
-
-        fun currentTrack() = this@MusicService.currentTrack
     }
 
     override fun onBind(intent: Intent?) = super.onBind(intent) ?: binder
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo) = mediaSession
-
-    @OptIn(UnstableApi::class)
-    private fun createExoPlayer(context: Context): ExoPlayer {
-        // Create a custom RenderersFactory
-        val renderersFactory = DefaultRenderersFactory(context).apply {
-            setExtensionRendererMode(DefaultRenderersFactory.EXTENSION_RENDERER_MODE_PREFER)
-        }
-
-        // Create and configure custom Extractor Factory
-        val extractorsFactory = DefaultExtractorsFactory().apply {
-            setConstantBitrateSeekingEnabled(true)
-        }
-
-        // Create custom media source factory
-        val mediaSourceFactory = DefaultMediaSourceFactory(
-            createDataSourceFactory()
-        ) {
-            arrayOf(MatroskaExtractor(), FragmentedMp4Extractor())
-        }
-
-        // Build ExoPlayer with all configurations
-        return ExoPlayer.Builder(context)
-            .setRenderersFactory(createRenderersFactory())
-            .setMediaSourceFactory(mediaSourceFactory)
-            .build()
-    }
 
     private fun createRenderersFactory() =
         object : DefaultRenderersFactory(this) {
@@ -191,8 +160,8 @@ class MusicService : MediaLibraryService(),
     override fun onCreate() {
         super.onCreate()
 
+        // .setMediaSourceFactory(createMediaSourceFactory())
         exoPlayer = ExoPlayer.Builder(this)
-            .setMediaSourceFactory(createMediaSourceFactory())
             .setRenderersFactory(createRenderersFactory())
             .setHandleAudioBecomingNoisy(true)
             .setWakeMode(C.WAKE_MODE_NETWORK)
@@ -207,6 +176,9 @@ class MusicService : MediaLibraryService(),
             .build()
             .apply {
                 addListener(this@MusicService)
+
+                Timber.tag("AudioService").d("ExoPlayer Created")
+
                 addAnalyticsListener(PlaybackStatsListener(false, this@MusicService))
             }
 
@@ -231,12 +203,14 @@ class MusicService : MediaLibraryService(),
         exoPlayer.shuffleModeEnabled = false
 
         scope.launch(SilentHandler) {
-            Timber.tag("MusicService").d("Playing queue")
+            if (queue.songs.isEmpty()) return@launch
+
+            exoPlayer.setMediaItems(queue.songs)
             exoPlayer.prepare()
             exoPlayer.playWhenReady = playWhenReady
         }
     }
-    
+
 //    private fun play(track: Track?) {
 //        if (playlist.isEmpty()) return
 //        val realTrack = track ?: playlist[0]
@@ -280,10 +254,6 @@ class MusicService : MediaLibraryService(),
 //        }
 //    }
 
-    private fun getRawUri(resourceId: Int): Uri {
-        return Uri.parse("android.resource://$packageName/$resourceId")
-    }
-
     // Optional: Helper function to check if resource exists
     private fun isResourceExists(resourceId: Int): Boolean {
         return try {
@@ -294,54 +264,38 @@ class MusicService : MediaLibraryService(),
         }
     }
 
-    // Optional: Extension function to safely create MediaItem
-    private fun Track.toMediaItem(context: Context): MediaItem? {
-        return try {
-            val uri = getRawUri(this.id)
-            if (isResourceExists(this.id)) {
-                MediaItem.fromUri(uri)
-            } else {
-                Timber.tag("AudioService").e("Resource not found: ${this.id}")
-                null
-            }
-        } catch (e: Exception) {
-            Timber.tag("AudioService").e("Error creating MediaItem: ${e.message}")
-            null
-        }
-    }
-
-    private fun sendNotification(track: Track) {
-        isPlaying.update { exoPlayer.isPlaying }
-        val style = androidx.media.app.NotificationCompat.MediaStyle()
-            .setShowActionsInCompactView(0, 1, 2)
-
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setStyle(style)
-            .setContentTitle(track.name)
-            .setContentText(track.desc)
-            .addAction(R.drawable.prev, "prev", createPrevPendingIntent())
-            .addAction(
-                if (exoPlayer.isPlaying) R.drawable.pause else R.drawable.play,
-                "play",
-                createPlayPendingIntent()
-            )
-            .addAction(R.drawable.next, "next", createNextPendingIntent())
-            .setSmallIcon(R.drawable.ic_launcher_background)
-            .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.onboard_1))
-            .build()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                startForeground(1, notification)
-            }
-        } else {
-            startForeground(1, notification)
-        }
-    }
+//    private fun sendNotification(track: Track) {
+//        isPlaying.update { exoPlayer.isPlaying }
+//        val style = androidx.media.app.NotificationCompat.MediaStyle()
+//            .setShowActionsInCompactView(0, 1, 2)
+//
+//        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+//            .setStyle(style)
+//            .setContentTitle(track.name)
+//            .setContentText(track.desc)
+//            .addAction(R.drawable.prev, "prev", createPrevPendingIntent())
+//            .addAction(
+//                if (exoPlayer.isPlaying) R.drawable.pause else R.drawable.play,
+//                "play",
+//                createPlayPendingIntent()
+//            )
+//            .addAction(R.drawable.next, "next", createNextPendingIntent())
+//            .setSmallIcon(R.drawable.ic_launcher_background)
+//            .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.onboard_1))
+//            .build()
+//
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            if (ContextCompat.checkSelfPermission(
+//                    this,
+//                    Manifest.permission.POST_NOTIFICATIONS
+//                ) == PackageManager.PERMISSION_GRANTED
+//            ) {
+//                startForeground(1, notification)
+//            }
+//        } else {
+//            startForeground(1, notification)
+//        }
+//    }
 
     private fun createPrevPendingIntent(): PendingIntent {
         val intent = Intent(this, MusicService::class.java).apply {
@@ -381,7 +335,7 @@ class MusicService : MediaLibraryService(),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
     }
-
+    
     companion object {
         const val PREV = "prev"
         const val NEXT = "next"
@@ -392,12 +346,18 @@ class MusicService : MediaLibraryService(),
         const val PERSISTENT_QUEUE_FILE = "persistent_queue.data"
     }
 
+    override fun onPlaybackStateChanged(@Player.State playbackState: Int) {
+        super.onPlaybackStateChanged(playbackState)
+
+        Timber.tag("AudioService").d("Playback State: $playbackState")
+    }
+
     override fun onPlaybackStatsReady(
         eventTime: AnalyticsListener.EventTime,
         playbackStats: PlaybackStats
     ) {
         val mediaItem =
             eventTime.timeline.getWindow(eventTime.windowIndex, Timeline.Window()).mediaItem
-        Timber.tag("MusicService").d("Media Item: $mediaItem")
+        Timber.tag("AudioService").d("Media Item: $mediaItem")
     }
 }

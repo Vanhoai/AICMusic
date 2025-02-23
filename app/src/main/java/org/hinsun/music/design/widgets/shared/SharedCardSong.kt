@@ -1,6 +1,5 @@
 package org.hinsun.music.design.widgets.shared
 
-import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,15 +19,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.hinsun.music.R
+import org.hinsun.music.database.aggregates.Song
 import org.hinsun.music.design.theme.AppTheme
 import org.hinsun.music.design.widgets.base.BaseImage
+import org.hinsun.music.extensions.toDateString
+import org.hinsun.music.extensions.toDurationString
+import timber.log.Timber
 
 @Composable
 fun SharedCardSong(
+    song: Song = Song.default(),
     modifier: Modifier = Modifier,
     onPress: () -> Unit = {}
 ) {
-
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -38,12 +41,11 @@ fun SharedCardSong(
     ) {
         BaseImage()
 
-
         Spacer(modifier = Modifier.width(12.dp))
         Column(modifier = Modifier.weight(1f)) {
             Row(modifier = Modifier.fillMaxSize()) {
                 Text(
-                    text = "Hẹn em mai sau gặp lại (feat. Lamoon)",
+                    text = song.song.title,
                     style = AppTheme.typography.normal,
                     fontSize = 16.sp,
                     maxLines = 2,
@@ -64,7 +66,7 @@ fun SharedCardSong(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "24-12-2024",
+                    text = song.song.dateDownloaded.toDateString(),
                     style = AppTheme.typography.italic,
                     fontSize = 14.sp,
                     maxLines = 1,
@@ -73,7 +75,7 @@ fun SharedCardSong(
                 )
 
                 Text(
-                    text = "5:43s",
+                    text = song.song.duration.toDurationString(),
                     style = AppTheme.typography.italic,
                     fontSize = 14.sp,
                     maxLines = 1,

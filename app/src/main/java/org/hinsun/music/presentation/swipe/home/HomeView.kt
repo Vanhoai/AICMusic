@@ -23,6 +23,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +36,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import org.hinsun.music.R
 import org.hinsun.music.database.LocalDatabase
+import org.hinsun.music.database.aggregates.Playlist
+import org.hinsun.music.database.aggregates.Song
 import org.hinsun.music.design.theme.AppTheme
 import org.hinsun.music.design.widgets.shared.SharedCardSong
 import org.hinsun.music.design.widgets.shared.SharedGradientOutlineImage
@@ -44,9 +50,6 @@ import timber.log.Timber
 fun HomeView(navHostController: NavHostController) {
     val scrollState = rememberScrollState()
     val database = LocalDatabase.current
-
-    val songs = database.getAllSongs().collectAsState(initial = emptyList())
-    Timber.tag("HomeView").d("Songs: $songs")
 
     LazyColumn(
         modifier = Modifier
@@ -71,6 +74,11 @@ fun HomeView(navHostController: NavHostController) {
         }
 
         item {
+            var songs by remember { mutableStateOf(emptyList<Song>()) }
+            LaunchedEffect(Unit) {
+                database.getAllSongs().collect { songs = it }
+            }
+
             Text(
                 text = "Recently",
                 style = AppTheme.typography.normal,
@@ -79,8 +87,9 @@ fun HomeView(navHostController: NavHostController) {
                 modifier = Modifier.padding(start = 20.dp, bottom = 12.dp)
             )
 
-            for (i in 0..4) {
+            for (i in songs.indices) {
                 SharedCardSong(
+                    song = songs[i],
                     onPress = {
                         navHostController.navigate(NavRoute.PLAYER.path)
                     }
@@ -89,20 +98,33 @@ fun HomeView(navHostController: NavHostController) {
         }
 
         item {
+            var playlists by remember { mutableStateOf(emptyList<Playlist>()) }
+            LaunchedEffect(Unit) {
+                database.getAllPlaylists().collect { playlists = it }
+            }
+
             SharedRowText(text = "Playlists")
 
             LazyRow {
                 item { Spacer(modifier = Modifier.width(20.dp)) }
-                items(5) {
-                    SharedPlaylistCard(onPress = {
-                        navHostController.navigate(NavRoute.PLAYLIST.path)
-                    })
+                items(playlists) { playlist ->
+                    SharedPlaylistCard(
+                        playlist = playlist,
+                        onPress = {
+                            navHostController.navigate(NavRoute.PLAYLIST.path)
+                        }
+                    )
                 }
                 item { Spacer(modifier = Modifier.width(8.dp)) }
             }
         }
 
         item {
+            var songs by remember { mutableStateOf(emptyList<Song>()) }
+            LaunchedEffect(Unit) {
+                database.getAllSongs().collect { songs = it }
+            }
+
             Spacer(modifier = Modifier.height(20.dp))
             SharedRowText(text = "Songs")
 
@@ -110,7 +132,7 @@ fun HomeView(navHostController: NavHostController) {
 
             LazyRow {
                 item { Spacer(modifier = Modifier.width(20.dp)) }
-                items(categories) {
+                items(categories) { category ->
                     Box(
                         modifier = Modifier
                             .padding(end = 12.dp)
@@ -120,7 +142,7 @@ fun HomeView(navHostController: NavHostController) {
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = it,
+                            text = category,
                             style = AppTheme.typography.normal,
                             fontSize = 16.sp,
                             color = AppTheme.colors.textPrimary,
@@ -132,10 +154,13 @@ fun HomeView(navHostController: NavHostController) {
             }
 
             Spacer(modifier = Modifier.height(12.dp))
-            Column {
-                for (i in 0..10) {
-                    SharedCardSong()
-                }
+            for (i in songs.indices) {
+                SharedCardSong(
+                    song = songs[i],
+                    onPress = {
+                        navHostController.navigate(NavRoute.PLAYER.path)
+                    }
+                )
             }
         }
     }

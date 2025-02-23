@@ -34,12 +34,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.hinsun.music.R
+import org.hinsun.music.database.aggregates.Playlist
 import org.hinsun.music.design.theme.AppTheme
 import org.hinsun.music.design.widgets.base.BaseImage
 import kotlin.math.roundToInt
 
 @Composable
-fun SharedPlaylistCard(onPress: () -> Unit) {
+fun SharedPlaylistCard(
+    playlist: Playlist,
+    onPress: () -> Unit
+) {
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
 
