@@ -24,8 +24,8 @@ import com.google.android.gms.auth.api.identity.BeginSignInRequest.GoogleIdToken
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.auth.api.identity.SignInClient
 import org.hinsun.music.BuildConfig
-import org.hinsun.music.design.theme.AppTheme
-import org.hinsun.music.design.widgets.base.BaseButton
+import org.hinsun.music.core.ui.design.theme.AppTheme
+import org.hinsun.music.core.ui.design.widgets.base.BaseButton
 
 
 @Composable

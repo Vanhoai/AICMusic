@@ -134,12 +134,15 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.compose)
     implementation(libs.datastore)
 
+    // Ktor
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.client.okhttp)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.serialization.json)
     implementation(libs.ktor.client.encoding)
-
+    implementation(libs.ktor.client.cio)
+    implementation(libs.ktor.client.logging)
+    implementation(libs.gson)
     implementation(kotlin("reflect"))
 
     // Ksp
@@ -187,11 +190,11 @@ dependencies {
     // Biometric
     implementation(libs.biometric)
 
-    implementation(project(":core"))
-    implementation(project(":domain"))
-    implementation(project(":infrastructure"))
+    implementation(libs.arrow.core)
+    implementation(libs.arrow.fx.coroutines)
 }
 
 ksp {
     arg("verbose", "true")
+    arg("room.schemaLocation", "$projectDir/schemas")
 }

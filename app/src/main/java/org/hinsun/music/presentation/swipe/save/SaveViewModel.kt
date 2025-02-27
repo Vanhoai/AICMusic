@@ -14,11 +14,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.hinsun.music.database.MusicDatabase
-import org.hinsun.music.database.entities.SongEntity
-import org.hinsun.music.services.DownloadService
-import org.hinsun.music.services.DownloadState
-import timber.log.Timber
+import org.hinsun.music.core.database.MusicDatabase
+import org.hinsun.music.core.database.entities.SongEntity
+import org.hinsun.music.core.services.DownloadService
+import org.hinsun.music.core.services.DownloadState
 import java.util.UUID
 import javax.inject.Inject
 

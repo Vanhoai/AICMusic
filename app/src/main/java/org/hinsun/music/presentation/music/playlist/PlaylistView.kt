@@ -32,11 +32,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import org.hinsun.music.R
-import org.hinsun.music.design.theme.AppTheme
-import org.hinsun.music.design.widgets.base.BaseImage
-import org.hinsun.music.design.widgets.base.BaseScaffold
-import org.hinsun.music.design.widgets.shared.SharedCardSong
-import org.hinsun.music.design.widgets.shared.SharedTopBar
+import org.hinsun.music.core.ui.design.theme.AppTheme
+import org.hinsun.music.core.ui.design.widgets.base.BaseImage
+import org.hinsun.music.core.ui.design.widgets.base.BaseScaffold
+import org.hinsun.music.core.ui.design.widgets.shared.SharedCardSong
+import org.hinsun.music.core.ui.design.widgets.shared.SharedTopBar
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable

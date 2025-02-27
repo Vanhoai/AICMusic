@@ -1,23 +1,25 @@
 package org.hinsun.music.presentation.swipe.more.authentication
 
+import android.app.Application
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import org.hinsun.core.storage.AppStorage
-import org.hinsun.core.storage.CryptoStorage
-import org.hinsun.music.BuildConfig
+import org.hinsun.music.core.extensions.dataStore
+import org.hinsun.music.core.storage.CryptoStorage
+import org.hinsun.music.core.constants.IsEnableBiometricKey
+import org.hinsun.music.core.extensions.get
 import org.hinsun.music.presentation.auth.AuthViewModel.Companion.TAG
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthenticationViewModel @Inject constructor(
-    private val appStorage: AppStorage,
+    private val application: Application,
     private val cryptoStorage: CryptoStorage,
 ) : ViewModel() {
-    fun loadIsEnableBiometric(): Boolean = appStorage.readIsEnableBiometric()
+    fun loadIsEnableBiometric(): Boolean = application.dataStore[IsEnableBiometricKey] ?: false
 
     // Register user biometrics by encrypting a randomly generated token
     fun register(
@@ -33,10 +35,10 @@ class AuthenticationViewModel @Inject constructor(
                 // for each user registration or consider using token received from authentication server)
                 val encryptedToken = cryptoStorage.encrypt(plainText, cipher)
 
-                cryptoStorage.writeWithEncrypt(
-                    key = BuildConfig.BIOMETRIC_KEY,
-                    value = encryptedToken
-                )
+//                cryptoStorage.writeWithEncrypt(
+//                    key = BuildConfig.BIOMETRIC_KEY,
+//                    value = encryptedToken
+//                )
 
                 // Execute custom action on successful registration
                 onSuccess(authResult)

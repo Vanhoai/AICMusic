@@ -40,7 +40,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.hinsun.music.design.widgets.shared.SharedWaveAnimation
+import org.hinsun.music.core.ui.design.widgets.shared.SharedWaveAnimation
 
 @Composable
 fun DualOrbitingArcs(modifier: Modifier = Modifier) {

@@ -19,10 +19,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.hinsun.music.design.widgets.base.BaseScaffold
-import org.hinsun.music.design.widgets.providers.GlobalLoadingProvider
-import org.hinsun.music.design.widgets.providers.LocalGlobalLoadingState
-import org.hinsun.music.design.widgets.shared.SharedWaveAnimation
+import org.hinsun.music.core.ui.design.widgets.base.BaseScaffold
+import org.hinsun.music.core.ui.design.widgets.providers.GlobalLoadingProvider
+import org.hinsun.music.core.ui.design.widgets.providers.LocalGlobalLoadingState
+import org.hinsun.music.core.ui.design.widgets.shared.SharedWaveAnimation
 import org.hinsun.music.presentation.auth.widgets.AuthHeading
 import org.hinsun.music.presentation.auth.widgets.BiometricButton
 import org.hinsun.music.presentation.auth.widgets.SocialButtons
@@ -53,11 +53,11 @@ fun AuthView(
     }
 
     fun signIn() {
-        // viewModel.signInWithGoogle(context)
-        scope.launch {
-            delay(1000)
-            navHostController.navigate(NavRoute.SWIPE.path)
-        }
+        viewModel.signInWithGoogle(context)
+//        scope.launch {
+//            delay(1000)
+//            navHostController.navigate(NavRoute.SWIPE.path)
+//        }
     }
 
     BaseScaffold { innerPadding ->
@@ -80,12 +80,14 @@ fun AuthView(
 
             if (uiState.value.isShowBiometric) {
                 BiometricButton(onPress = {
-                    viewModel.signInWithBiometric(
-                        context = context,
-                        onSuccess = { message ->
-                            Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-                        }
-                    )
+                    scope.launch {
+                        viewModel.signInWithBiometric(
+                            context = context,
+                            onSuccess = { message ->
+                                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                    }
                 })
             }
 

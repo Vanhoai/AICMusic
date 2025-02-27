@@ -4,7 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import org.hinsun.infrastructure.datasources.local.AccountLocalDatasource
+import org.hinsun.music.infrastructure.datasources.local.AccountLocalDatasource
 import javax.inject.Singleton
 
 @Module

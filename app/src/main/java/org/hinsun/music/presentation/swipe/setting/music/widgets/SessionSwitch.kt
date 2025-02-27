@@ -17,8 +17,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.hinsun.music.design.theme.AppTheme
-import org.hinsun.music.design.widgets.base.BaseSwitch
+import org.hinsun.music.core.ui.design.theme.AppTheme
+import org.hinsun.music.core.ui.design.widgets.base.BaseSwitch
 
 @Composable
 fun SessionSwitch(

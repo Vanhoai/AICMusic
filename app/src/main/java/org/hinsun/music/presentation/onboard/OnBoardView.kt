@@ -19,11 +19,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import org.hinsun.music.constants.IsFirstLaunchKey
-import org.hinsun.music.design.theme.AppTheme
-import org.hinsun.music.design.widgets.base.BaseScaffold
-import org.hinsun.music.design.widgets.shared.SharedGradientButton
-import org.hinsun.music.extensions.rememberPreference
+import org.hinsun.music.core.constants.IsFirstLaunchKey
+import org.hinsun.music.core.extensions.rememberPreference
+import org.hinsun.music.core.ui.design.theme.AppTheme
+import org.hinsun.music.core.ui.design.widgets.base.BaseScaffold
+import org.hinsun.music.core.ui.design.widgets.shared.SharedGradientButton
 import org.hinsun.music.presentation.graphs.NavRoute
 import org.hinsun.music.presentation.onboard.widgets.DualOrbitingArcs
 import org.hinsun.music.presentation.onboard.widgets.OnboardHeading

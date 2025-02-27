@@ -13,11 +13,11 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import org.hinsun.music.constants.MaxSongCacheSizeKey
-import org.hinsun.music.database.InternalDatabase
-import org.hinsun.music.database.MusicDatabase
-import org.hinsun.music.extensions.dataStore
-import org.hinsun.music.extensions.get
+import org.hinsun.music.core.constants.MaxSongCacheSizeKey
+import org.hinsun.music.core.database.InternalDatabase
+import org.hinsun.music.core.database.MusicDatabase
+import org.hinsun.music.core.extensions.dataStore
+import org.hinsun.music.core.extensions.get
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -32,9 +32,8 @@ annotation class DownloadCache
 @Module(
     includes = [
         CoreModule::class,
-        NetworkModule::class,
         RepositoryModule::class,
-        UseCaseModule::class,
+        UseCaseModule::class
     ]
 )
 @OptIn(UnstableApi::class)

@@ -10,8 +10,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.hinsun.music.design.theme.AppTheme
-import org.hinsun.music.design.widgets.shared.SharedTabSlider
+import org.hinsun.music.core.ui.design.theme.AppTheme
+import org.hinsun.music.core.ui.design.widgets.shared.SharedTabSlider
 
 fun LazyListScope.buildAppearanceTheme() {
     item {

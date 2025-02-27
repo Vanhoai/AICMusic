@@ -68,16 +68,16 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.launch
 import org.hinsun.music.R
-import org.hinsun.music.design.theme.AppTheme
-import org.hinsun.music.design.widgets.base.BaseButton
-import org.hinsun.music.design.widgets.shared.SharedCardSong
-import org.hinsun.music.design.widgets.shared.SharedGradientButton
-import org.hinsun.music.design.widgets.shared.SharedGradientOutlineImage
-import org.hinsun.music.design.widgets.shared.SharedRowText
+import org.hinsun.music.core.ui.design.theme.AppTheme
+import org.hinsun.music.core.ui.design.widgets.base.BaseButton
+import org.hinsun.music.core.ui.design.widgets.shared.SharedCardSong
+import org.hinsun.music.core.ui.design.widgets.shared.SharedGradientButton
+import org.hinsun.music.core.ui.design.widgets.shared.SharedGradientOutlineImage
+import org.hinsun.music.core.ui.design.widgets.shared.SharedRowText
 import org.hinsun.music.presentation.swipe.save.widgets.DownloadAction
 import org.hinsun.music.presentation.swipe.save.widgets.DownloadModalBottomSheet
 import org.hinsun.music.presentation.swipe.save.widgets.PasteLink
-import org.hinsun.music.services.DownloadState
+import org.hinsun.music.core.services.DownloadState
 import timber.log.Timber
 
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -96,8 +96,6 @@ fun SaveView(
     val downloadMap by saveViewModel.downloadState.collectAsState()
     val progressState by saveViewModel.progress.collectAsState()
     var progress by remember { mutableFloatStateOf(0f) }
-
-    Timber.tag("SaveView").d("download job: ${downloadMap[jobId]}")
 
     LaunchedEffect(downloadMap) {
         if (downloadMap[jobId] != null) {

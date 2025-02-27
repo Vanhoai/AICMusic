@@ -22,15 +22,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.util.UnstableApi
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import org.hinsun.music.database.LocalDatabase
-import org.hinsun.music.database.MusicDatabase
-import org.hinsun.music.design.theme.AICMusicTheme
-import org.hinsun.music.design.widgets.providers.SharedLoadingProvider
-import org.hinsun.music.playback.LocalPlayerConnection
-import org.hinsun.music.playback.MusicService
-import org.hinsun.music.playback.PlayerConnection
+import org.hinsun.music.core.database.LocalDatabase
+import org.hinsun.music.core.database.MusicDatabase
+import org.hinsun.music.core.playback.LocalPlayerConnection
+import org.hinsun.music.core.playback.MusicService
+import org.hinsun.music.core.playback.PlayerConnection
+import org.hinsun.music.core.ui.design.theme.AICMusicTheme
+import org.hinsun.music.core.ui.design.widgets.providers.SharedLoadingProvider
 import org.hinsun.music.presentation.graphs.NavGraph
-import timber.log.Timber
 import javax.inject.Inject
 
 @OptIn(UnstableApi::class)

@@ -7,7 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.hinsun.music.design.theme.AppTheme
+import org.hinsun.music.core.ui.design.theme.AppTheme
 
 @Composable
 fun BookmarkView() {

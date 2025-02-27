@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import org.hinsun.music.design.theme.AppTheme
+import org.hinsun.music.core.ui.design.theme.AppTheme
 
 @Composable
 fun GradientProgressBar(

@@ -49,9 +49,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 import org.hinsun.music.R
-import org.hinsun.music.design.theme.AppTheme
-import org.hinsun.music.design.widgets.base.BaseButton
-import org.hinsun.music.design.widgets.shared.SharedGradientButton
+import org.hinsun.music.core.ui.design.theme.AppTheme
+import org.hinsun.music.core.ui.design.widgets.base.BaseButton
+import org.hinsun.music.core.ui.design.widgets.shared.SharedGradientButton
 import kotlin.math.PI
 import kotlin.math.sin
 

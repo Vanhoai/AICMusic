@@ -18,7 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.hinsun.music.R
-import org.hinsun.music.design.theme.AppTheme
+import org.hinsun.music.core.ui.design.theme.AppTheme
 
 @Composable
 fun AuthHeading() {

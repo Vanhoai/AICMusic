@@ -6,7 +6,6 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,7 +21,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,16 +33,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import org.hinsun.music.R
-import org.hinsun.music.database.LocalDatabase
-import org.hinsun.music.database.aggregates.Playlist
-import org.hinsun.music.database.aggregates.Song
-import org.hinsun.music.design.theme.AppTheme
-import org.hinsun.music.design.widgets.shared.SharedCardSong
-import org.hinsun.music.design.widgets.shared.SharedGradientOutlineImage
-import org.hinsun.music.design.widgets.shared.SharedPlaylistCard
-import org.hinsun.music.design.widgets.shared.SharedRowText
+import org.hinsun.music.core.database.LocalDatabase
+import org.hinsun.music.core.database.aggregates.Playlist
+import org.hinsun.music.core.database.aggregates.Song
+import org.hinsun.music.core.ui.design.theme.AppTheme
+import org.hinsun.music.core.ui.design.widgets.shared.SharedCardSong
+import org.hinsun.music.core.ui.design.widgets.shared.SharedGradientOutlineImage
+import org.hinsun.music.core.ui.design.widgets.shared.SharedPlaylistCard
+import org.hinsun.music.core.ui.design.widgets.shared.SharedRowText
 import org.hinsun.music.presentation.graphs.NavRoute
-import timber.log.Timber
 
 @Composable
 fun HomeView(navHostController: NavHostController) {

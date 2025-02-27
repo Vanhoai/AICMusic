@@ -14,7 +14,7 @@ import androidx.media3.datasource.RawResourceDataSource
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.navigation.NavHostController
 import org.hinsun.music.R
-import org.hinsun.music.design.widgets.base.BaseScaffold
+import org.hinsun.music.core.ui.design.widgets.base.BaseScaffold
 
 @Composable
 fun IntroductionView(navHostController: NavHostController) {

@@ -15,8 +15,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import org.hinsun.music.design.widgets.base.BaseScaffold
-import org.hinsun.music.design.widgets.shared.SharedTopBar
+import org.hinsun.music.core.ui.design.widgets.base.BaseScaffold
+import org.hinsun.music.core.ui.design.widgets.shared.SharedTopBar
 import org.hinsun.music.presentation.swipe.more.widgets.buildEnableBiometric
 
 @Composable

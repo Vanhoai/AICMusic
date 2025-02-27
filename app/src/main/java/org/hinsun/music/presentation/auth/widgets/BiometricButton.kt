@@ -21,8 +21,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.hinsun.music.R
-import org.hinsun.music.design.theme.AppTheme
-import org.hinsun.music.design.widgets.shared.SharedGradientButton
+import org.hinsun.music.core.ui.design.theme.AppTheme
+import org.hinsun.music.core.ui.design.widgets.shared.SharedGradientButton
 
 @Composable
 fun BiometricButton(onPress: () -> Unit) {

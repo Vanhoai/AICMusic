@@ -6,9 +6,9 @@ import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import org.hinsun.music.design.theme.AppTheme
-import org.hinsun.music.design.widgets.base.BaseTabSlider
-import org.hinsun.music.design.widgets.base.TabSliderOption
+import org.hinsun.music.core.ui.design.theme.AppTheme
+import org.hinsun.music.core.ui.design.widgets.base.BaseTabSlider
+import org.hinsun.music.core.ui.design.widgets.base.TabSliderOption
 
 val audioFormats = listOf(
     TabSliderOption(name = "Best"),

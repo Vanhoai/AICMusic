@@ -1,5 +1,6 @@
 package org.hinsun.music.presentation.auth
 
+import android.app.Application
 import android.content.Context
 import android.os.Build
 import android.widget.Toast
@@ -14,6 +15,7 @@ import androidx.credentials.GetCredentialRequest.Builder
 import androidx.credentials.GetCredentialResponse
 import androidx.credentials.PasswordCredential
 import androidx.credentials.PublicKeyCredential
+import androidx.datastore.preferences.core.edit
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -32,31 +34,37 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import org.hinsun.core.https.HttpResponse
-import org.hinsun.core.storage.AppStorage
-import org.hinsun.core.storage.CryptoStorage
-import org.hinsun.domain.usecases.sign_in.SignInRequest
-import org.hinsun.domain.usecases.sign_in.SignInUseCase
+import org.hinsun.music.core.storage.CryptoStorage
+import org.hinsun.music.domain.usecases.sign_in.SignInRequest
+import org.hinsun.music.domain.usecases.sign_in.SignInUseCase
 import org.hinsun.music.BuildConfig
+import org.hinsun.music.core.constants.AccessTokenKey
+import org.hinsun.music.core.constants.IsEnableBiometricKey
+import org.hinsun.music.core.constants.IsEnableCryptoStorageKey
+import org.hinsun.music.core.constants.RefreshTokenKey
+import org.hinsun.music.core.extensions.dataStore
+import org.hinsun.music.core.extensions.get
 import timber.log.Timber
 import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class AuthViewModel @Inject constructor(
+    private val application: Application,
     private val signInUseCase: SignInUseCase,
     private val cryptoStorage: CryptoStorage,
-    private val appStorage: AppStorage,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
 
     init {
-        val isEnableBiometric = appStorage.readIsEnableBiometric()
-        val isEnableCryptoStorage = appStorage.readIsEnableCryptoStorage()
+        val isEnableBiometric = application.dataStore[IsEnableBiometricKey] ?: false
+        val isEnableCryptoStorage = application.dataStore[IsEnableCryptoStorageKey] ?: false
+
         _uiState.update { it.copy(isShowBiometric = isEnableBiometric && isEnableCryptoStorage) }
     }
 
-    val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
+    private val googleIdOption: GetGoogleIdOption = GetGoogleIdOption.Builder()
         .setFilterByAuthorizedAccounts(true)
         .setServerClientId(BuildConfig.WEB_CLIENT_ID)
         .setFilterByAuthorizedAccounts(false)
@@ -82,10 +90,12 @@ class AuthViewModel @Inject constructor(
             oAuthGoogle(result, context)
         } catch (exception: Exception) {
             exception.printStackTrace()
+            Toast.makeText(application, exception.message, Toast.LENGTH_SHORT).show()
+            _uiState.update { it.copy(isLoading = false) }
         }
     }
 
-    fun signInWithBiometric(
+    suspend fun signInWithBiometric(
         context: FragmentActivity,
         onSuccess: (plainText: String) -> Unit
     ) {
@@ -144,7 +154,7 @@ class AuthViewModel @Inject constructor(
     }
 
     // Authenticate user using biometrics by decrypting stored token
-    private fun authenticate(
+    private suspend fun authenticate(
         context: FragmentActivity,
         onSuccess: (plainText: String) -> Unit
     ) {
@@ -199,12 +209,18 @@ class AuthViewModel @Inject constructor(
                 when (httpResponse) {
                     is HttpResponse.HttpSuccess -> {
                         val dataResponse = httpResponse.data
-                        appStorage.writeAuthSession(
-                            accessToken = dataResponse.payload!!.accessToken,
-                            refreshToken = dataResponse.payload!!.refreshToken
-                        )
+                        val accessToken = dataResponse.payload!!.accessToken
+                        val refreshToken = dataResponse.payload!!.refreshToken
 
-                        _uiState.update { it.copy(isLoading = false, isSignInSuccess = true) }
+                        Timber.tag("AuthViewMode").d("Access Token: $accessToken")
+                        Timber.tag("AuthViewModel").d("Refresh Token: $refreshToken")
+
+                        application.dataStore.edit {
+                            it[AccessTokenKey] = accessToken
+                            it[RefreshTokenKey] = refreshToken
+                        }
+
+                        _uiState.update { it.copy(isLoading = false, isSignInSuccess = false) }
                     }
 
                     is HttpResponse.HttpFailure -> {

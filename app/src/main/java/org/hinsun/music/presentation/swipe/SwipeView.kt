@@ -22,7 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.hinsun.music.R
-import org.hinsun.music.design.widgets.base.BaseScaffold
+import org.hinsun.music.core.ui.design.widgets.base.BaseScaffold
 import org.hinsun.music.presentation.graphs.BottomNavItem
 import org.hinsun.music.presentation.graphs.CurvedBottomNavigation
 import org.hinsun.music.presentation.graphs.SwipeRoute

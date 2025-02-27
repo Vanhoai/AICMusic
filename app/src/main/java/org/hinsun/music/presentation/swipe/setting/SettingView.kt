@@ -18,7 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import org.hinsun.music.R
-import org.hinsun.music.design.widgets.shared.SharedGradientOutlineImage
+import org.hinsun.music.core.ui.design.widgets.shared.SharedGradientOutlineImage
 import org.hinsun.music.presentation.graphs.NavRoute
 import org.hinsun.music.presentation.swipe.widgets.GroupOption
 import org.hinsun.music.presentation.swipe.widgets.OptionNavigate

@@ -1,6 +1,5 @@
 package org.hinsun.music.presentation.music.player
 
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -53,24 +52,22 @@ import androidx.navigation.NavHostController
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import org.hinsun.music.R
-import org.hinsun.music.constants.CurrentSongIdKey
-import org.hinsun.music.database.LocalDatabase
-import org.hinsun.music.database.aggregates.Song
-import org.hinsun.music.design.theme.AppTheme
-import org.hinsun.music.design.widgets.base.BaseImage
-import org.hinsun.music.design.widgets.base.BaseScaffold
-import org.hinsun.music.extensions.rememberPreference
-import org.hinsun.music.playback.EmptyMusicQueue
-import org.hinsun.music.playback.LocalPlayerConnection
-import org.hinsun.music.playback.MusicQueue
+import org.hinsun.music.core.constants.CurrentSongIdKey
+import org.hinsun.music.core.database.LocalDatabase
+import org.hinsun.music.core.database.aggregates.Song
+import org.hinsun.music.core.ui.design.theme.AppTheme
+import org.hinsun.music.core.ui.design.widgets.base.BaseImage
+import org.hinsun.music.core.ui.design.widgets.base.BaseScaffold
+import org.hinsun.music.core.playback.LocalPlayerConnection
+import org.hinsun.music.core.playback.MusicQueue
 import org.hinsun.music.presentation.graphs.idBackgroundTransition
 import org.hinsun.music.presentation.graphs.idImageTransition
 import org.hinsun.music.presentation.graphs.idNameTransition
 import org.hinsun.music.presentation.music.player.widgets.MusicActions
 import org.hinsun.music.presentation.music.player.widgets.MusicPlayerProgressBar
 import timber.log.Timber
-import androidx.media3.common.Player.STATE_ENDED
 import androidx.media3.common.Player.STATE_READY
+import org.hinsun.music.core.extensions.rememberPreference
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
