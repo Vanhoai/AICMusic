@@ -8,7 +8,7 @@
 ICMusic is a modern Android application that allows users to download and listen to music from
 YouTube, featuring a beautiful user interface and smooth user experience.
 
-![thumbnail](https://raw.githubusercontent.com/Vanhoai/ICMusic/thumbnail.png)
+<img src="./thumbnail.png" alt="thumbnail" width="800"/>
 
 ## ✨ Key Features
 
