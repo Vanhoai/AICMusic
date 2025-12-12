@@ -9,9 +9,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="org.hinsun.music" />
-                  <option name="mobileSdkAppId" value="1:179442760937:android:e9dcbafa875207cd66c478" />
-                  <option name="projectId" value="hinsunmusic-59cf9" />
-                  <option name="projectNumber" value="179442760937" />
+                  <option name="mobileSdkAppId" value="1:1037380077909:android:aee9e33361759f342407dc" />
+                  <option name="projectId" value="visonary-8d949" />
+                  <option name="projectNumber" value="1037380077909" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

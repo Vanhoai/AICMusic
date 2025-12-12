@@ -1,3 +1,4 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.Locale
 import java.util.Properties
 
@@ -8,8 +9,6 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.google.services)
-
-    kotlin("kapt")
 }
 
 val keyStoreFile = rootProject.file("keystore.properties")
@@ -37,7 +36,7 @@ fun formatKeyBuildConfig(key: String): String {
 
 android {
     namespace = "org.hinsun.music"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "org.hinsun.music"
@@ -67,6 +66,7 @@ android {
                 "proguard-rules.pro"
             )
 
+            //noinspection WrongGradleMethod
             localProperties.propertyNames().asIterator().forEach { propName ->
                 if (propName.toString() == "sdk.dir") return@forEach
 
@@ -81,6 +81,9 @@ android {
         }
 
         debug {
+            signingConfig = signingConfigs.getByName("release")
+
+            //noinspection WrongGradleMethod
             localProperties.propertyNames().asIterator().forEach { propName ->
                 if (propName.toString() == "sdk.dir") return@forEach
 
@@ -98,8 +101,10 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-    kotlinOptions {
-        jvmTarget = "11"
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
     }
 
     buildFeatures {
@@ -154,7 +159,7 @@ dependencies {
     // hilt
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
-    kapt(libs.hilt.android.compiler)
+    ksp(libs.hilt.android.compiler)
 
     // room database
     implementation(libs.androidx.room.runtime)

@@ -5,7 +5,10 @@
 [![Compose](https://img.shields.io/badge/Jetpack-Compose-blue.svg)](https://developer.android.com/jetpack/compose)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-ICMusic is a modern Android application that allows users to download and listen to music from YouTube, featuring a beautiful user interface and smooth user experience.
+ICMusic is a modern Android application that allows users to download and listen to music from
+YouTube, featuring a beautiful user interface and smooth user experience.
+
+[Thumbs Up](./thumbnail.png)
 
 ## ✨ Key Features
 
@@ -48,6 +51,7 @@ ICMusic is a modern Android application that allows users to download and listen
 ## 🚀 Installation
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/yourusername/ICMusic.git
 ```
@@ -55,6 +59,7 @@ git clone https://github.com/yourusername/ICMusic.git
 2. Open the project in Android Studio
 
 3. Add your YouTube API key to `local.properties`:
+
 ```properties
 YOUTUBE_API_KEY=your_api_key_here
 ```
@@ -64,12 +69,14 @@ YOUTUBE_API_KEY=your_api_key_here
 ## 📖 Usage Guide
 
 ### Downloading Music
+
 1. Open the app and tap the search icon
 2. Enter a song name or paste a YouTube URL
 3. Select the desired song
 4. Tap the download button and wait for completion
 
 ### Playing Music
+
 - Tap any song to play
 - Use control buttons for play/pause, next, previous
 - Swipe up on the mini player to open full-screen player
@@ -99,6 +106,7 @@ ICMusic is distributed under the MIT License. See `LICENSE` for more information
 ## 🙏 Acknowledgments
 
 Thanks to the open-source libraries used in this project:
+
 - [ExoPlayer](https://github.com/google/ExoPlayer)
 - [Coil](https://github.com/coil-kt/coil)
 - [Retrofit](https://github.com/square/retrofit)
@@ -107,6 +115,7 @@ Thanks to the open-source libraries used in this project:
 ## 🔒 Privacy & Security
 
 ICMusic takes your privacy seriously. We:
+
 - Only request necessary permissions
 - Don't collect personal data
 - Store all data locally on your device
@@ -116,6 +125,7 @@ ICMusic takes your privacy seriously. We:
 ## 🐛 Bug Reporting
 
 Found a bug? Please help us improve by reporting it:
+
 1. Go to the Issues tab
 2. Click "New Issue"
 3. Select "Bug Report"

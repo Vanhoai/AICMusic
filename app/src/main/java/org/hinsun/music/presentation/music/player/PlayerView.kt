@@ -93,7 +93,7 @@ fun SharedTransitionScope.PlayerView(
                 .padding(innerPadding)
                 .background(Color.Black.copy(alpha = 0.5f))
                 .sharedElement(
-                    state = rememberSharedContentState(key = idBackgroundTransition),
+                    sharedContentState = rememberSharedContentState(key = idBackgroundTransition),
                     animatedVisibilityScope = animatedVisibilityScope,
                 )
         ) {
@@ -147,7 +147,7 @@ fun SharedTransitionScope.PlayerView(
                         shape = CircleShape,
                         modifier = Modifier
                             .sharedElement(
-                                state = rememberSharedContentState(key = idImageTransition),
+                                sharedContentState = rememberSharedContentState(key = idImageTransition),
                                 animatedVisibilityScope = animatedVisibilityScope,
                             )
                     )
@@ -168,7 +168,7 @@ fun SharedTransitionScope.PlayerView(
                     color = AppTheme.colors.textPrimary,
                     modifier = Modifier
                         .sharedElement(
-                            state = rememberSharedContentState(key = idNameTransition),
+                            sharedContentState = rememberSharedContentState(key = idNameTransition),
                             animatedVisibilityScope = animatedVisibilityScope,
                         )
                 )

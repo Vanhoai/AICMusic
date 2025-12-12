@@ -55,7 +55,7 @@ fun SharedTransitionScope.MiniPlayer(
                 navHostController.navigate(NavRoute.PLAYER.path)
             }
             .sharedElement(
-                state = rememberSharedContentState(key = idBackgroundTransition),
+                sharedContentState = rememberSharedContentState(key = idBackgroundTransition),
                 animatedVisibilityScope = animatedVisibilityScope,
             )
     ) {
@@ -69,7 +69,7 @@ fun SharedTransitionScope.MiniPlayer(
                 shape = RoundedCornerShape(4.dp),
                 modifier = Modifier
                     .sharedElement(
-                        state = rememberSharedContentState(key = idImageTransition),
+                        sharedContentState = rememberSharedContentState(key = idImageTransition),
                         animatedVisibilityScope = animatedVisibilityScope,
                     )
             )
@@ -85,7 +85,7 @@ fun SharedTransitionScope.MiniPlayer(
                     color = AppTheme.colors.textPrimary,
                     modifier = Modifier
                         .sharedElement(
-                            state = rememberSharedContentState(key = idNameTransition),
+                            sharedContentState = rememberSharedContentState(key = idNameTransition),
                             animatedVisibilityScope = animatedVisibilityScope,
                         )
                 )
@@ -98,7 +98,7 @@ fun SharedTransitionScope.MiniPlayer(
                     overflow = TextOverflow.Ellipsis,
                     color = AppTheme.colors.textPrimary,
                     modifier = Modifier.sharedElement(
-                        state = rememberSharedContentState(key = "DurationTransition"),
+                        sharedContentState = rememberSharedContentState(key = "DurationTransition"),
                         animatedVisibilityScope = animatedVisibilityScope,
                     )
                 )

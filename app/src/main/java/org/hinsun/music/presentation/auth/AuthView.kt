@@ -53,7 +53,6 @@ fun AuthView(
     }
 
     fun signIn() {
-        // viewModel.signInWithGoogle(context)
         scope.launch {
             delay(1000)
             navHostController.navigate(NavRoute.SWIPE.path)

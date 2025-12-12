@@ -23,10 +23,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "AICMusic"
 include(":app")
-
-// Sub modules
-include(":processors")
 include(":core")
 include(":domain")
 include(":infrastructure")
-
+include(":ui")

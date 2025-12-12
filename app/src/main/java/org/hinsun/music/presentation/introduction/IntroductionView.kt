@@ -3,7 +3,6 @@ package org.hinsun.music.presentation.introduction
 import android.content.ContentResolver
 import android.net.Uri
 import androidx.compose.foundation.AndroidExternalSurface
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember

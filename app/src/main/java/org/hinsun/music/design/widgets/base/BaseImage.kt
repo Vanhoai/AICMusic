@@ -14,7 +14,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 
-const val defaultImage = "https://i.pinimg.com/474x/e2/88/35/e288353b41be0f2bc9c5a08f677da80a.jpg"
+const val defaultImage = "https://i.pinimg.com/736x/92/2b/b7/922bb757183414a56f57f034f050424b.jpg"
 
 @Composable
 fun BaseImage(

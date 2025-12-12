@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import org.hinsun.music.extensions.slideComposable
 import org.hinsun.music.presentation.auth.AuthView
 import org.hinsun.music.presentation.introduction.IntroductionView
 import org.hinsun.music.presentation.music.player.PlayerView
@@ -35,12 +36,12 @@ import timber.log.Timber
 @Composable
 fun NavGraph(navHostController: NavHostController) {
     SharedTransitionLayout {
-        NavHost(navHostController, NavRoute.SWIPE.path) {
+        NavHost(navHostController, NavRoute.ONBOARD.path) {
             // Main Flow
-            composable(NavRoute.INTRODUCTION.path) { IntroductionView(navHostController) }
-            composable(NavRoute.ONBOARD.path) { OnBoardView(navHostController) }
-            composable(NavRoute.AUTH.path) { AuthView(navHostController) }
-            composable(NavRoute.SWIPE.path) {
+            slideComposable(NavRoute.INTRODUCTION.path) { IntroductionView(navHostController) }
+            slideComposable(NavRoute.ONBOARD.path) { OnBoardView(navHostController) }
+            slideComposable(NavRoute.AUTH.path) { AuthView(navHostController) }
+            slideComposable(NavRoute.SWIPE.path) {
                 SwipeView(
                     navHostController = navHostController,
                     animatedVisibilityScope = this
@@ -48,25 +49,25 @@ fun NavGraph(navHostController: NavHostController) {
             }
 
             // Setting
-            composable(NavRoute.APPEARANCE.path) { AppearanceView(navHostController) }
-            composable(NavRoute.ANIMATION.path) { AnimationView(navHostController) }
-            composable(NavRoute.AUDIO.path) { AudioView(navHostController) }
-            composable(NavRoute.DOWNLOADING.path) { DownloadingView(navHostController) }
-            composable(NavRoute.STORAGE.path) { StorageView(navHostController) }
-            composable(NavRoute.STYLE.path) { StyleView(navHostController) }
-            composable(NavRoute.DEVELOPER.path) { DeveloperOptionsView(navHostController) }
+            slideComposable(NavRoute.APPEARANCE.path) { AppearanceView(navHostController) }
+            slideComposable(NavRoute.ANIMATION.path) { AnimationView(navHostController) }
+            slideComposable(NavRoute.AUDIO.path) { AudioView(navHostController) }
+            slideComposable(NavRoute.DOWNLOADING.path) { DownloadingView(navHostController) }
+            slideComposable(NavRoute.STORAGE.path) { StorageView(navHostController) }
+            slideComposable(NavRoute.STYLE.path) { StyleView(navHostController) }
+            slideComposable(NavRoute.DEVELOPER.path) { DeveloperOptionsView(navHostController) }
 
             // Player
-            composable(NavRoute.PLAYER.path) { PlayerView(navHostController, this) }
-            composable(NavRoute.PLAYLIST.path) { PlaylistView(navHostController, this) }
+            slideComposable(NavRoute.PLAYER.path) { PlayerView(navHostController, this) }
+            slideComposable(NavRoute.PLAYLIST.path) { PlaylistView(navHostController, this) }
 
             // More
-            composable(NavRoute.PROFILE.path) { ProfileView(navHostController) }
-            composable(NavRoute.NOTIFICATION.path) { NotificationView(navHostController) }
-            composable(NavRoute.AUTHENTICATION.path) { AuthenticationView(navHostController) }
-            composable(NavRoute.PRIVACY_POLICY.path) { PrivacyAndPolicyView(navHostController) }
-            composable(NavRoute.ABOUT.path) { AboutView(navHostController) }
-            composable(NavRoute.CONTACT.path) { ContactView(navHostController) }
+            slideComposable(NavRoute.PROFILE.path) { ProfileView(navHostController) }
+            slideComposable(NavRoute.NOTIFICATION.path) { NotificationView(navHostController) }
+            slideComposable(NavRoute.AUTHENTICATION.path) { AuthenticationView(navHostController) }
+            slideComposable(NavRoute.PRIVACY_POLICY.path) { PrivacyAndPolicyView(navHostController) }
+            slideComposable(NavRoute.ABOUT.path) { AboutView(navHostController) }
+            slideComposable(NavRoute.CONTACT.path) { ContactView(navHostController) }
         }
     }
 }
